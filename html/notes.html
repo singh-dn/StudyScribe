@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Papers - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: 262 83% 61%;
+            --secondary: 210 40% 97%;
+            --muted-foreground: 220 15% 40%;
+            --border: 214.3 31.8% 91.4%;
+            --card: 0 0% 100%;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F2F5;
+        }
+        .text-primary { color: hsl(var(--primary)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary-foreground { color: white; }
+        .ring-primary { --tw-ring-color: hsl(var(--primary)); }
+        .border-primary { border-color: hsl(var(--primary)); }
+        .accent-primary { accent-color: hsl(var(--primary)); }
+
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .skeleton { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; background-color: #e2e8f0; }
+        @keyframes pulse { 50% { opacity: .5; } }
+        
+        .tab-btn.active { border-color: hsl(var(--primary)); color: hsl(var(--primary)); background-color: hsla(var(--primary), 0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .modal-content { animation: slide-up 0.3s ease-out; }
+        @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- =========== Top Navigation (Reused from Dashboard) =========== -->
+    <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 -mb-px">
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span><span class="font-extrabold tracking-tight text-xl hidden sm:inline">StudyScribe</span></a>
+                    <nav class="hidden lg:flex items-center space-x-1 bg-gray-100 p-1 rounded-full">
+                        <a href="#" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Dashboard</a>
+                        <a href="#" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Find Writers</a>
+                        <a href="#" class="px-3 py-1 text-sm font-medium rounded-full bg-white text-primary shadow">Question Papers</a>
+                        <a href="#" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Notes</a>
+                    </nav>
+                </div>
+                <div class="flex items-center space-x-3">
+                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="bell" class="w-5 h-5 text-gray-500"></i></button>
+                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="message-square" class="w-5 h-5 text-gray-500"></i></button>
+                    <div class="relative" id="profile-dropdown-container">
+                        <button id="profile-dropdown-btn" class="flex items-center space-x-2">
+                            <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" alt="User avatar">
+                            <span class="hidden md:inline text-sm font-medium">Dev Singh</span><i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                        </button>
+                        <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Purchases</a><a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a><a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto max-w-9xl px-4 sm:px-6 lg:px-8 py-8">
+        <!-- =========== Page Header =========== -->
+        <section class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">📄 Question Papers & Notes</h1>
+            <p class="mt-2 text-lg text-gray-500">Upload your question papers or explore others. Learn smarter, not harder.</p>
+            <div class="mt-6 flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                    <input type="search" placeholder="Search by subject, keywords, year..." class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-primary focus:border-primary">
+                </div>
+                <button id="open-upload-modal" class="bg-primary text-white font-semibold py-3 px-6 rounded-full flex items-center justify-center gap-2 btn-anim">
+                    <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+                    Upload Content
+                </button>
+            </div>
+        </section>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- =========== Filters Sidebar =========== -->
+            <aside class="w-full lg:w-1/4 xl:w-1/5">
+                <div class="sticky top-24">
+                    <h2 class="text-lg font-bold mb-4">Filters</h2>
+                    <div class="space-y-6">
+                        <!-- Subjects Filter -->
+                        <div>
+                            <h3 class="font-semibold mb-2">Subject</h3>
+                            <div class="space-y-2 text-sm">
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary mr-2">Computer Science</label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary mr-2">Mathematics</label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary mr-2">Physics</label>
+                            </div>
+                        </div>
+                        <!-- Academic Level -->
+                        <div>
+                           <h3 class="font-semibold mb-2">Academic Level</h3>
+                           <select class="w-full text-sm border-gray-300 rounded-md focus:ring-primary focus:border-primary">
+                               <option>Any Level</option><option>High School</option><option>College</option><option>University</option>
+                           </select>
+                        </div>
+                        <!-- Year -->
+                         <div>
+                           <h3 class="font-semibold mb-2">Year</h3>
+                           <select class="w-full text-sm border-gray-300 rounded-md focus:ring-primary focus:border-primary">
+                               <option>Any Year</option><option>2024</option><option>2023</option><option>2022</option>
+                           </select>
+                        </div>
+                        <!-- Price -->
+                        <div>
+                            <h3 class="font-semibold mb-2">Price</h3>
+                            <div class="flex gap-4 text-sm"><label class="flex items-center"><input type="radio" name="price" class="h-4 w-4 text-primary focus:ring-primary accent-primary mr-2">Any</label><label class="flex items-center"><input type="radio" name="price" class="h-4 w-4 text-primary focus:ring-primary accent-primary mr-2">Free</label><label class="flex items-center"><input type="radio" name="price" class="h-4 w-4 text-primary focus:ring-primary accent-primary mr-2">Paid</label></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- =========== Main Content Area =========== -->
+            <main class="flex-1">
+                <!-- Tabs -->
+                <div class="border-b mb-4">
+                    <nav class="-mb-px flex space-x-6" id="main-tabs">
+                        <button class="tab-btn active py-2 px-1 border-b-2 font-medium text-sm" data-tab="all-papers">All Papers</button>
+                        <button class="tab-btn py-2 px-1 border-b-2 font-medium text-sm" data-tab="my-papers">My Papers</button>
+                    </nav>
+                </div>
+                
+                <!-- All Papers Content -->
+                <div id="all-papers" class="tab-content active">
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- Paper Card 1 -->
+                        <div class="bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg">
+                           <div class="p-4"><h3 class="font-bold text-lg truncate">Computer Science Final 2023</h3><p class="text-xs text-gray-500">CS, BCA, 3rd Year</p></div>
+                           <div class="px-4 pb-4 space-y-3">
+                               <div class="flex items-center justify-between text-sm"><span class="flex items-center gap-1.5"><i data-lucide="user-circle" class="w-4 h-4 text-gray-400"></i>Priya S.</span><span class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i>25 Pages</span></div>
+                               <div class="flex items-center justify-between text-sm"><span class="flex items-center gap-1.5"><i data-lucide="star" class="w-4 h-4 text-amber-400 fill-current"></i>4.9 (1.2k)</span><span class="flex items-center gap-1.5"><i data-lucide="download" class="w-4 h-4 text-gray-400"></i>5k+ Downloads</span></div>
+                           </div>
+                           <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-primary">₹50</span><div class="flex gap-2"><button class="open-preview-modal text-sm font-semibold hover:text-primary">Preview</button><button class="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm btn-anim">Buy</button></div></div>
+                        </div>
+                        <!-- Paper Card 2 (Free) -->
+                        <div class="bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg">
+                           <div class="p-4"><h3 class="font-bold text-lg truncate">Calculus Mid-term 2024</h3><p class="text-xs text-gray-500">Mathematics, B.Sc, 1st Year</p></div>
+                           <div class="px-4 pb-4 space-y-3">
+                               <div class="flex items-center justify-between text-sm"><span class="flex items-center gap-1.5"><i data-lucide="user-circle" class="w-4 h-4 text-gray-400"></i>Dev Singh</span><span class="flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-gray-400"></i>10 Pages</span></div>
+                               <div class="flex items-center justify-between text-sm"><span class="flex items-center gap-1.5"><i data-lucide="star" class="w-4 h-4 text-amber-400 fill-current"></i>4.8 (800)</span><span class="flex items-center gap-1.5"><i data-lucide="download" class="w-4 h-4 text-gray-400"></i>2.1k+ Downloads</span></div>
+                           </div>
+                           <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-green-600">Free</span><div class="flex gap-2"><button class="open-preview-modal text-sm font-semibold hover:text-primary">Preview</button><button class="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm btn-anim">Download</button></div></div>
+                        </div>
+                        <!-- Skeleton Loader Card -->
+                        <div class="bg-white rounded-lg shadow-sm border overflow-hidden p-4 space-y-4">
+                            <div class="h-6 w-3/4 rounded skeleton"></div><div class="h-4 w-1/2 rounded skeleton"></div>
+                            <div class="flex justify-between"><div class="h-4 w-1/3 rounded skeleton"></div><div class="h-4 w-1/4 rounded skeleton"></div></div>
+                            <div class="flex justify-between"><div class="h-4 w-1/3 rounded skeleton"></div><div class="h-4 w-1/4 rounded skeleton"></div></div>
+                            <div class="flex justify-between items-center pt-4 mt-2 border-t"><div class="h-8 w-1/4 rounded skeleton"></div><div class="h-10 w-1/3 rounded-full skeleton"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- My Papers Content -->
+                <div id="my-papers" class="tab-content">
+                    <div class="bg-white rounded-lg shadow-sm border p-4">
+                        <h3 class="font-bold text-lg">My Uploaded Papers</h3>
+                        <div class="mt-4 space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                                <div><p class="font-semibold">Calculus Mid-term 2024</p><p class="text-xs text-gray-500">Downloads: 2,142 • Earnings: ₹0</p></div>
+                                <div class="flex gap-2"><button class="text-xs font-semibold p-2 hover:bg-gray-200 rounded-full"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button class="text-xs font-semibold p-2 hover:bg-red-100 text-red-500 rounded-full"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+    
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            <div class="p-6 border-b flex justify-between items-center"><h2 id="upload-modal-title" class="text-2xl font-bold">Upload Your Content</h2><button id="close-upload-modal" class="p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+            
+            <div id="upload-step-1" class="p-8 text-center">
+                <h3 class="font-semibold text-lg">What would you like to upload?</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
+                    <button data-upload-type="paper" class="upload-type-btn border-2 rounded-xl p-6 text-center hover:border-primary hover:bg-primary/5 transition-all"><i data-lucide="file-text" class="mx-auto h-10 w-10 text-primary"></i><h4 class="font-bold mt-2">Question Paper</h4></button>
+                    <button data-upload-type="notes" class="upload-type-btn border-2 rounded-xl p-6 text-center hover:border-primary hover:bg-primary/5 transition-all"><i data-lucide="book-marked" class="mx-auto h-10 w-10 text-primary"></i><h4 class="font-bold mt-2">Notes</h4></button>
+                    <button data-upload-type="roadmap" class="upload-type-btn border-2 rounded-xl p-6 text-center hover:border-primary hover:bg-primary/5 transition-all"><i data-lucide="map" class="mx-auto h-10 w-10 text-primary"></i><h4 class="font-bold mt-2">Roadmap</h4></button>
+                </div>
+            </div>
+
+            <form id="upload-form-paper" class="upload-form hidden p-6 flex-1 overflow-y-auto space-y-4">
+                <div><label for="paper-title" class="text-sm font-medium">Title</label><input id="paper-title" type="text" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label for="paper-subject" class="text-sm font-medium">Subject</label><input id="paper-subject" type="text" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                    <div><label for="paper-year" class="text-sm font-medium">Year</label><input id="paper-year" type="number" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                </div>
+                <div><label for="paper-desc" class="text-sm font-medium">Description</label><textarea id="paper-desc" rows="3" class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></textarea></div>
+                <div><label class="text-sm font-medium">Upload File</label><div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"><div class="space-y-1 text-center"><i data-lucide="upload-cloud" class="mx-auto h-12 w-12 text-gray-400"></i><p class="text-sm text-gray-600">Drag & drop or <span class="text-primary font-semibold">browse</span></p><p class="text-xs text-gray-500">PDF, DOCX, PNG, JPG up to 10MB</p></div></div></div>
+                <div><label class="text-sm font-medium">Set Price</label><div class="flex items-center gap-4 mt-1"><label class="flex items-center"><input type="radio" name="price-upload-paper" checked class="accent-primary mr-2">Free</label><label class="flex items-center"><input type="radio" name="price-upload-paper" class="accent-primary mr-2">Paid</label><input type="number" placeholder="₹XXX" class="text-sm border-gray-300 rounded-md shadow-sm w-24"></div></div>
+                <div class="mt-4 p-3 bg-red-50 border-l-4 border-red-400 text-red-800 text-xs rounded">Only original, clear scanned papers are allowed. Plagiarism leads to account ban.</div>
+            </form>
+
+            <form id="upload-form-notes" class="upload-form hidden p-6 flex-1 overflow-y-auto space-y-4">
+                <div><label for="notes-title" class="text-sm font-medium">Notes Title</label><input id="notes-title" type="text" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                <div><label for="notes-subject" class="text-sm font-medium">Subject</label><input id="notes-subject" type="text" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                <div><label for="notes-desc" class="text-sm font-medium">Description</label><textarea id="notes-desc" rows="3" class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></textarea></div>
+                <div><label class="text-sm font-medium">Upload File</label><div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"><div class="space-y-1 text-center"><i data-lucide="upload-cloud" class="mx-auto h-12 w-12 text-gray-400"></i><p class="text-sm text-gray-600">Drag & drop or <span class="text-primary font-semibold">browse</span></p><p class="text-xs text-gray-500">PDF, DOCX up to 10MB</p></div></div></div>
+                <div><label class="text-sm font-medium">Set Price</label><div class="flex items-center gap-4 mt-1"><label class="flex items-center"><input type="radio" name="price-upload-notes" checked class="accent-primary mr-2">Free</label><label class="flex items-center"><input type="radio" name="price-upload-notes" class="accent-primary mr-2">Paid</label><input type="number" placeholder="₹XXX" class="text-sm border-gray-300 rounded-md shadow-sm w-24"></div></div>
+                <div class="mt-4 p-3 bg-red-50 border-l-4 border-red-400 text-red-800 text-xs rounded">Only upload your original notes. Plagiarism will result in a ban.</div>
+            </form>
+
+            <form id="upload-form-roadmap" class="upload-form hidden p-6 flex-1 overflow-y-auto space-y-4">
+                <div><label for="roadmap-title" class="text-sm font-medium">Roadmap Title</label><input id="roadmap-title" type="text" placeholder="e.g., Ultimate Web Development Roadmap 2025" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                <div><label for="roadmap-career" class="text-sm font-medium">Career Path</label><input id="roadmap-career" type="text" placeholder="e.g., Full-Stack Developer" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                <div><label for="roadmap-desc" class="text-sm font-medium">Description</label><textarea id="roadmap-desc" rows="4" placeholder="Briefly describe what this roadmap covers and who it's for..." class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></textarea></div>
+                <div><label class="text-sm font-medium">Cover Image (Optional)</label><div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"><div class="space-y-1 text-center"><i data-lucide="image" class="mx-auto h-12 w-12 text-gray-400"></i><p class="text-sm text-gray-600">Upload a cover image</p></div></div></div>
+                 <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 text-blue-800 text-xs rounded">Roadmaps are community resources and are always free to access.</div>
+            </form>
+
+            <div id="upload-modal-footer" class="hidden p-6 border-t bg-gray-50 flex justify-between items-center rounded-b-2xl">
+                <button type="button" class="back-to-selection text-sm font-semibold hover:text-primary flex items-center gap-1"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
+                <div class="flex gap-3">
+                    <button type="button" class="px-4 py-2 rounded-full border bg-white shadow-sm" id="cancel-upload">Cancel</button>
+                    <button type="submit" class="bg-primary text-white font-semibold py-2 px-5 rounded-full btn-anim">Upload & Publish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <!-- Preview modal content will be dynamically inserted here -->
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Profile Dropdown
+            const profileBtn = document.getElementById('profile-dropdown-btn');
+            const profileMenu = document.getElementById('profile-dropdown-menu');
+            profileBtn.addEventListener('click', (e) => { e.stopPropagation(); profileMenu.classList.toggle('hidden'); });
+            document.addEventListener('click', () => profileMenu.classList.add('hidden'));
+
+            // Main Tabs
+            const tabsContainer = document.getElementById('main-tabs');
+            const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const tabId = button.dataset.tab;
+                    tabContents.forEach(content => {
+                        content.classList.toggle('active', content.id === tabId);
+                    });
+                });
+            });
+
+            // Upload Modal Logic
+            const uploadModal = document.getElementById('upload-modal');
+            const openUploadModalBtn = document.getElementById('open-upload-modal');
+            const closeUploadModalBtn = document.getElementById('close-upload-modal');
+            const cancelUploadBtn = document.getElementById('cancel-upload');
+
+            const uploadStep1 = document.getElementById('upload-step-1');
+            const uploadForms = document.querySelectorAll('.upload-form');
+            const uploadModalFooter = document.getElementById('upload-modal-footer');
+            const uploadModalTitle = document.getElementById('upload-modal-title');
+            const backToSelectionBtn = document.querySelector('.back-to-selection');
+            
+            const resetModal = () => {
+                uploadStep1.classList.remove('hidden');
+                uploadForms.forEach(form => form.classList.add('hidden'));
+                uploadModalFooter.classList.add('hidden');
+                uploadModalTitle.textContent = "Upload Your Content";
+            };
+            
+            const openModal = () => {
+                resetModal();
+                uploadModal.classList.remove('hidden');
+            };
+
+            const closeModal = () => {
+                uploadModal.classList.add('hidden');
+            };
+
+            openUploadModalBtn.addEventListener('click', openModal);
+            closeUploadModalBtn.addEventListener('click', closeModal);
+            cancelUploadBtn.addEventListener('click', closeModal);
+
+            document.querySelectorAll('.upload-type-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const type = button.dataset.uploadType;
+                    uploadStep1.classList.add('hidden');
+                    uploadModalFooter.classList.remove('hidden');
+
+                    let formToShowId, titleText;
+                    if (type === 'paper') {
+                        formToShowId = 'upload-form-paper';
+                        titleText = "Upload Question Paper";
+                    } else if (type === 'notes') {
+                        formToShowId = 'upload-form-notes';
+                        titleText = "Upload Your Notes";
+                    } else if (type === 'roadmap') {
+                        formToShowId = 'upload-form-roadmap';
+                        titleText = "Create a Roadmap";
+                    }
+                    
+                    document.getElementById(formToShowId).classList.remove('hidden');
+                    uploadModalTitle.textContent = titleText;
+                });
+            });
+
+            backToSelectionBtn.addEventListener('click', resetModal);
+
+            // Preview Modal
+            const previewModal = document.getElementById('preview-modal');
+            const openPreviewBtns = document.querySelectorAll('.open-preview-modal');
+            
+            const previewContentHTML = `
+                <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+                    <div class="p-4 border-b flex justify-between items-center"><h2 class="text-xl font-bold">Preview: Computer Science Final 2023</h2><button class="close-preview-modal p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+                    <div class="flex-1 p-4 grid md:grid-cols-3 gap-6 overflow-y-auto">
+                        <div class="md:col-span-2 bg-gray-100 border rounded-lg flex items-center justify-center"><p class="text-gray-400">Document Preview (First 2 pages)</p></div>
+                        <div><h3 class="font-bold">Details</h3><p class="text-sm mt-2">Subject: CS, BCA, 3rd Year</p><p class="text-sm mt-1">Uploaded by: Priya S.</p><div class="mt-4 p-4 bg-secondary rounded-lg text-center"><p class="text-2xl font-bold text-primary">₹50</p><button class="mt-2 w-full bg-primary text-white font-semibold py-2 px-5 rounded-full btn-anim">Buy & Download</button></div></div>
+                    </div>
+                </div>`;
+
+            openPreviewBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    previewModal.innerHTML = previewContentHTML;
+                    lucide.createIcons();
+                    previewModal.classList.remove('hidden');
+                    previewModal.querySelector('.close-preview-modal').addEventListener('click', () => {
+                        previewModal.classList.add('hidden');
+                        previewModal.innerHTML = '';
+                    });
+                });
+            });
+            
+        });
+    </script>
+</body>
+</html>
+

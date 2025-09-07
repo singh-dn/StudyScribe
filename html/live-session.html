@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Sessions - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: 262 83% 61%;
+            --secondary: 210 40% 97%;
+            --muted-foreground: 220 15% 40%;
+            --border: 214.3 31.8% 91.4%;
+            --card: 0 0% 100%;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F2F5;
+        }
+        .text-primary { color: hsl(var(--primary)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary-foreground { color: white; }
+        .ring-primary { --tw-ring-color: hsl(var(--primary)); }
+        .border-primary { border-color: hsl(var(--primary)); }
+        .accent-primary { accent-color: hsl(var(--primary)); }
+
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .tab-btn.active { border-color: hsl(var(--primary)); color: hsl(var(--primary)); background-color: hsla(var(--primary), 0.1); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .modal-content { animation: slide-up 0.3s ease-out; }
+        @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .booking-step { display: none; }
+        .booking-step.active { display: block; animation: fade-in 0.5s ease; }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+        .option-card.selected { border-color: hsl(var(--primary)); background-color: hsla(var(--primary), 0.05); transform: scale(1.05); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- =========== Top Navigation (Reused) =========== -->
+    <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 -mb-px">
+                 <div class="flex items-center space-x-4">
+                    <a href="#" class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span><span class="font-extrabold tracking-tight text-xl hidden sm:inline">StudyScribe</span></a>
+                </div>
+                 <div class="flex items-center space-x-3">
+                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="bell" class="w-5 h-5 text-gray-500"></i></button>
+                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="message-square" class="w-5 h-5 text-gray-500"></i></button>
+                    <div class="relative" id="profile-dropdown-container">
+                        <button id="profile-dropdown-btn" class="flex items-center space-x-2">
+                            <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" alt="User avatar">
+                            <span class="hidden md:inline text-sm font-medium">Dev Singh</span><i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                        </button>
+                        <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a><a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <!-- =========== Page Header =========== -->
+        <section class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">🎥 Live Sessions & Video Calls</h1>
+            <p class="mt-2 text-lg text-gray-500">Connect with writers, mentors, and peers in real time.</p>
+            <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="open-booking-modal" class="bg-primary text-white font-semibold py-3 px-6 rounded-full flex items-center justify-center gap-2 btn-anim">
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                    Book a Live Session
+                </button>
+                <button class="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-full flex items-center justify-center gap-2 btn-anim">
+                    <i data-lucide="calendar-days" class="w-5 h-5"></i>
+                    My Sessions
+                </button>
+            </div>
+        </section>
+
+        <!-- =========== My Sessions Section =========== -->
+        <section>
+            <!-- Tabs -->
+            <div class="border-b mb-6">
+                <nav class="-mb-px flex space-x-8" id="sessions-tabs">
+                    <button class="tab-btn active py-2 px-1 border-b-2 font-semibold text-sm" data-tab="upcoming">Upcoming</button>
+                    <button class="tab-btn py-2 px-1 border-b-2 font-semibold text-sm text-gray-500" data-tab="past">Past</button>
+                    <button class="tab-btn py-2 px-1 border-b-2 font-semibold text-sm text-gray-500" data-tab="hosted">Hosted</button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="upcoming" class="tab-content active">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Session Card -->
+                    <div class="bg-white rounded-lg shadow-sm border p-5">
+                        <h3 class="font-bold text-lg">AI Assignment Doubt Session</h3>
+                        <p class="text-sm text-gray-500">with <span class="font-medium text-gray-800">Priya Sharma</span></p>
+                        <div class="mt-4 space-y-2 text-sm">
+                            <p class="flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-gray-400"></i> September 8, 2025</p>
+                            <p class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-gray-400"></i> 7:00 PM - 8:00 PM (1 hr)</p>
+                        </div>
+                        <button id="open-video-modal" class="mt-5 w-full bg-green-500 text-white font-semibold py-2 rounded-full flex items-center justify-center gap-2 btn-anim">
+                            <i data-lucide="video" class="w-5 h-5"></i>Join Now
+                        </button>
+                    </div>
+                    <!-- Empty State Example -->
+                    <!-- <div class="md:col-span-3 text-center py-16"><i data-lucide="rocket" class="w-16 h-16 mx-auto text-gray-300"></i><h3 class="mt-4 text-lg font-semibold">No upcoming sessions.</h3><p class="text-gray-500">Book your first one to get started!</p></div> -->
+                </div>
+            </div>
+            <div id="past" class="tab-content"><p class="text-center py-10 text-gray-500">No past sessions.</p></div>
+            <div id="hosted" class="tab-content"><p class="text-center py-10 text-gray-500">You haven't hosted any sessions.</p></div>
+        </section>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-backdrop" class="hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"></div>
+    
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Booking Modal Content will be injected here by JS -->
+    </div>
+    
+    <!-- Live Video Call Modal -->
+    <div id="video-modal" class="hidden fixed inset-0 bg-gray-900 z-50 flex flex-col text-white">
+        <!-- Video Call UI will be injected here by JS -->
+    </div>
+    
+    <!-- Post-Session Feedback Modal -->
+    <div id="feedback-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Feedback Modal Content will be injected here by JS -->
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="hidden fixed top-5 right-5 bg-green-500 text-white py-2 px-5 rounded-lg shadow-lg flex items-center gap-2 z-[60]"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Global variables and functions
+            const backdrop = document.getElementById('modal-backdrop');
+            const toast = document.getElementById('toast');
+            
+            // Show Toast
+            const showToast = (message, icon = 'check-circle', color = 'bg-green-500') => {
+                toast.innerHTML = `<i data-lucide="${icon}" class="w-5 h-5"></i><span>${message}</span>`;
+                toast.className = `fixed top-5 right-5 text-white py-2 px-5 rounded-lg shadow-lg flex items-center gap-2 z-[60] ${color}`;
+                lucide.createIcons(); toast.classList.remove('hidden');
+                setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+            };
+
+            // Profile Dropdown
+            document.getElementById('profile-dropdown-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profile-dropdown-menu').classList.toggle('hidden'); });
+            document.addEventListener('click', () => document.getElementById('profile-dropdown-menu').classList.add('hidden'));
+
+            // Sessions Tabs
+            const tabsContainer = document.getElementById('sessions-tabs');
+            const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const tabId = button.dataset.tab;
+                    tabContents.forEach(content => content.classList.toggle('active', content.id === tabId));
+                });
+            });
+
+            // Booking Modal Logic
+            const bookingModal = document.getElementById('booking-modal');
+            let currentStep = 1; let sessionType = '';
+            
+            const updateBookingModal = () => {
+                bookingModal.innerHTML = `
+                 <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+                    <div class="p-6 border-b flex justify-between items-center"><h2 class="text-2xl font-bold">Book a Session</h2><button class="close-modal p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+                    <div class="p-6 flex-1 overflow-y-auto">
+                        <!-- Step 1: Select Type -->
+                        <div class="booking-step ${currentStep === 1 ? 'active' : ''}">
+                            <h3 class="font-semibold text-lg">Select Session Type</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                <button data-type="1:1" class="option-card border-2 rounded-xl p-4 text-center transition-all"><i data-lucide="user" class="mx-auto h-8 w-8 text-primary"></i><h4 class="font-bold mt-2">1:1 with Writer</h4></button>
+                                <button data-type="lecture" class="option-card border-2 rounded-xl p-4 text-center transition-all"><i data-lucide="presentation" class="mx-auto h-8 w-8 text-primary"></i><h4 class="font-bold mt-2">Lecture Session</h4></button>
+                                <button data-type="group" class="option-card border-2 rounded-xl p-4 text-center transition-all"><i data-lucide="users" class="mx-auto h-8 w-8 text-primary"></i><h4 class="font-bold mt-2">Group Session</h4></button>
+                            </div>
+                        </div>
+                         <!-- Step 2: Details -->
+                        <div class="booking-step ${currentStep === 2 ? 'active' : ''} space-y-4">
+                            <h3 class="font-semibold text-lg">Session Details</h3>
+                            <div><label class="text-sm font-medium">Subject / Topic</label><input type="text" class="mt-1 w-full border-gray-300 rounded-md"></div>
+                            <div><label class="text-sm font-medium">Preferred Date & Time</label><input type="datetime-local" class="mt-1 w-full border-gray-300 rounded-md"></div>
+                            <div><label class="text-sm font-medium">Duration</label><select class="mt-1 w-full border-gray-300 rounded-md"><option>30 minutes</option><option>1 hour</option><option>2 hours</option></select></div>
+                            <div><label class="text-sm font-medium">Description</label><textarea rows="3" class="mt-1 w-full border-gray-300 rounded-md"></textarea></div>
+                        </div>
+                        <!-- Step 3: Confirmation -->
+                        <div class="booking-step ${currentStep === 3 ? 'active' : ''}">
+                           <h3 class="font-semibold text-lg text-center">Confirm Your Booking</h3>
+                           <div class="mt-4 p-4 border rounded-lg bg-gray-50 space-y-2"><p><strong>Type:</strong> ${sessionType}</p><p><strong>Price:</strong> ₹1,000</p></div>
+                        </div>
+                    </div>
+                    <div class="p-4 border-t bg-gray-50 flex justify-between items-center rounded-b-2xl">
+                        <button id="booking-back" class="bg-white border px-4 py-2 rounded-full font-semibold text-sm ${currentStep === 1 ? 'invisible' : ''}">Back</button>
+                        <button id="booking-next" class="bg-primary text-white px-6 py-2 rounded-full font-semibold text-sm btn-anim">${currentStep === 3 ? 'Confirm & Pay' : 'Next'}</button>
+                    </div>
+                </div>`;
+                lucide.createIcons();
+                bookingModal.querySelectorAll('.close-modal').forEach(b => b.addEventListener('click', closeBookingModal));
+                document.getElementById('booking-next').addEventListener('click', () => {
+                     if(currentStep < 3) { currentStep++; updateBookingModal(); } 
+                     else { closeBookingModal(); showToast('Session booked successfully 🎉'); }
+                });
+                document.getElementById('booking-back').addEventListener('click', () => { if(currentStep > 1) { currentStep--; updateBookingModal(); } });
+                bookingModal.querySelectorAll('.option-card').forEach(c => c.addEventListener('click', () => { sessionType = c.dataset.type; currentStep++; updateBookingModal(); }));
+            };
+            const openBookingModal = () => { currentStep = 1; updateBookingModal(); bookingModal.classList.remove('hidden'); backdrop.classList.remove('hidden'); };
+            const closeBookingModal = () => { bookingModal.classList.add('hidden'); backdrop.classList.add('hidden'); };
+            document.getElementById('open-booking-modal').addEventListener('click', openBookingModal);
+
+            // Video Modal Logic
+            const openVideoModal = () => {
+                 videoModal.innerHTML = `
+                    <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+                        <!-- Main Video Feed -->
+                        <div class="flex-1 bg-black flex items-center justify-center relative"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" class="w-32 h-32 rounded-full"><span class="absolute bottom-2 left-2 text-sm bg-black/30 px-2 py-1 rounded">Priya Sharma (Host)</span><span class="absolute top-4 left-4 z-10 bg-black/30 p-2 rounded-lg text-xs"><span>Session Time: </span><span id="timer">59:59</span></div></div>
+                        <!-- Sidebar -->
+                        <div class="w-full md:w-80 bg-gray-900 flex flex-col border-l border-gray-700">
+                           <div class="p-3 border-b border-gray-700"><h3 class="font-semibold">Participants (2)</h3></div>
+                           <div class="p-3 space-y-3 flex-1 overflow-y-auto"><div class="flex items-center gap-2"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" class="w-8 h-8 rounded-full"><span>Dev Singh (You)</span></div></div>
+                           <div class="p-3 border-b border-gray-700"><h3 class="font-semibold">Chat</h3></div>
+                           <div class="p-3 flex-1 overflow-y-auto custom-scrollbar text-sm space-y-3"><div class="p-2 bg-gray-700 rounded-lg">Hello!</div></div>
+                           <div class="p-2 border-t border-gray-700"><input type="text" placeholder="Type a message..." class="w-full bg-gray-700 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 ring-primary"></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-900/50 backdrop-blur-sm p-4 flex justify-center items-center gap-4 border-t border-gray-700">
+                        <button class="bg-gray-700 p-3 rounded-full"><i data-lucide="mic" class="w-6 h-6"></i></button><button class="bg-gray-700 p-3 rounded-full"><i data-lucide="video" class="w-6 h-6"></i></button><button class="bg-gray-700 p-3 rounded-full"><i data-lucide="screen-share" class="w-6 h-6"></i></button><button class="bg-gray-700 p-3 rounded-full"><i data-lucide="hand" class="w-6 h-6"></i></button><button id="end-call-btn" class="bg-red-600 p-3 rounded-full"><i data-lucide="phone-off" class="w-6 h-6"></i></button>
+                    </div>`;
+                 lucide.createIcons(); videoModal.classList.remove('hidden');
+                 document.getElementById('end-call-btn').addEventListener('click', () => { videoModal.classList.add('hidden'); openFeedbackModal(); });
+            };
+            document.getElementById('open-video-modal').addEventListener('click', openVideoModal);
+            
+            // Feedback Modal Logic
+            const openFeedbackModal = () => {
+                 feedbackModal.innerHTML = `
+                    <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-md">
+                        <div class="p-6 text-center">
+                            <h2 class="text-2xl font-bold">Rate this session</h2><p class="text-gray-500 mt-2">How was your experience with Priya Sharma?</p>
+                            <div class="flex justify-center text-4xl text-gray-300 my-4 cursor-pointer">
+                                <span class="hover:text-amber-400">★</span><span class="hover:text-amber-400">★</span><span class="hover:text-amber-400">★</span><span class="hover:text-amber-400">★</span><span class="hover:text-amber-400">★</span>
+                            </div>
+                            <textarea placeholder="Add a comment..." rows="3" class="w-full border-gray-300 rounded-md"></textarea>
+                        </div>
+                        <div class="p-4 bg-gray-50 flex justify-end gap-3 rounded-b-2xl"><button id="close-feedback-modal" class="bg-primary text-white font-semibold py-2 px-5 rounded-full btn-anim">Submit</button></div>
+                    </div>`;
+                 feedbackModal.classList.remove('hidden'); backdrop.classList.remove('hidden');
+                 document.getElementById('close-feedback-modal').addEventListener('click', () => {
+                     feedbackModal.classList.add('hidden'); backdrop.classList.add('hidden'); showToast('Feedback submitted!', 'thumbs-up');
+                 });
+            };
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { --primary: 262 83% 61%; --muted-foreground: 220 15% 40%; }
+        body { font-family: 'Inter', sans-serif; background-color: #F7F9FC; }
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .aurora-bg::before, .aurora-bg::after { content: ''; position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.2; }
+        .aurora-bg::before { width: 600px; height: 600px; background-color: #C4B5FD; top: 50%; left: -250px; animation: pulse-aurora-1 18s infinite alternate; }
+        .aurora-bg::after { width: 500px; height: 500px; background-color: #A5F3FC; bottom: -300px; right: -250px; animation: pulse-aurora-2 18s infinite alternate; animation-delay: 3s; }
+        @keyframes pulse-aurora-1 { from { transform: scale(0.9) translate(-20px, -50px); } to { transform: scale(1.1) translate(20px, 50px); } }
+        @keyframes pulse-aurora-2 { from { transform: scale(0.9) translate(20px, 30px); } to { transform: scale(1.1) translate(-20px, -30px); } }
+        .btn-primary { background-color: hsl(var(--primary)); }
+        .role-card { transition: all 0.2s ease-in-out; }
+        .role-card.selected { border-color: hsl(var(--primary)); background-color: rgba(99, 102, 241, 0.05); transform: scale(1.05); }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen py-12">
+    <div class="aurora-bg"></div>
+    <div class="w-full max-w-2xl p-8 space-y-6">
+        <div class="text-center">
+             <a href="./index.html" class="inline-flex items-center gap-3">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-md">SS</span>
+              <span class="font-extrabold tracking-tight text-2xl">StudyScribe</span>
+            </a>
+            <h1 class="text-3xl font-bold mt-6">Create Your Account 🎓</h1>
+            <p class="text-gray-500">Join our community of learners and experts.</p>
+        </div>
+
+        <div class="bg-white/70 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg p-8">
+            <form id="signup-form" class="space-y-6">
+                <!-- Step 1: Role Selection -->
+                <div id="step-1" class="step">
+                    <h2 class="font-semibold text-lg text-center">First, select your role</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+                        <div class="role-card border-2 rounded-xl p-6 text-center cursor-pointer" data-role="student">
+                            <span class="text-5xl">👩‍🎓</span>
+                            <h3 class="font-bold text-lg mt-2">I am a Student</h3>
+                            <p class="text-sm text-gray-500">Looking for writers and notes.</p>
+                        </div>
+                        <div class="role-card border-2 rounded-xl p-6 text-center cursor-pointer" data-role="writer">
+                            <span class="text-5xl">✍️</span>
+                            <h3 class="font-bold text-lg mt-2">I am a Writer</h3>
+                            <p class="text-sm text-gray-500">Ready to earn by helping others.</p>
+                        </div>
+                    </div>
+                    <button type="button" id="next-to-step-2" class="mt-8 w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 transition-all transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Next</button>
+                </div>
+                
+                <!-- Step 2: Basic Info -->
+                <div id="step-2" class="step hidden">
+                    <!-- Form fields for basic info -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                       <div>
+                            <label for="fullname" class="text-sm font-medium text-gray-700">Full Name</label>
+                            <input id="fullname" name="fullname" type="text" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                        <div>
+                            <label for="email-signup" class="text-sm font-medium text-gray-700">Email</label>
+                            <input id="email-signup" name="email-signup" type="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                        <div>
+                            <label for="password-signup" class="text-sm font-medium text-gray-700">Password</label>
+                            <input id="password-signup" name="password-signup" type="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                         <div>
+                            <label for="confirm-password" class="text-sm font-medium text-gray-700">Confirm Password</label>
+                            <input id="confirm-password" name="confirm-password" type="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                    </div>
+                     <div class="flex items-center justify-between mt-6 gap-4">
+                        <button type="button" class="back-btn w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-full shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">Back</button>
+                        <button type="button" id="next-to-step-3" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 transition-all transform hover:-translate-y-1">Next</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Profile Setup -->
+                <div id="step-3" class="step hidden">
+                    <!-- Student Profile Setup -->
+                    <div id="student-profile" class="hidden space-y-4">
+                        <h3 class="font-semibold text-lg text-center">Tell us about your studies</h3>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Academic Level</label>
+                            <select class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                                <option>High School</option>
+                                <option>College</option>
+                                <option>Postgraduate</option>
+                            </select>
+                        </div>
+                         <div>
+                            <label class="text-sm font-medium text-gray-700">Subjects of Interest (comma separated)</label>
+                            <input type="text" placeholder="e.g., Computer Science, Mathematics" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                    </div>
+                    <!-- Writer Profile Setup -->
+                    <div id="writer-profile" class="hidden space-y-6">
+                         <h3 class="font-semibold text-lg text-center">Set up your writer profile</h3>
+                         
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Profile Picture</label>
+                            <div class="mt-1 flex items-center gap-4">
+                                <img id="profile-preview" src="https://api.dicebear.com/9.x/initials/svg?seed=" alt="Profile preview" class="h-16 w-16 rounded-full bg-gray-100 object-cover"/>
+                                <input id="profile-picture" name="profile-picture" type="file" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="study-background" class="text-sm font-medium text-gray-700">Study Background</label>
+                            <input id="study-background" name="study-background" type="text" placeholder="e.g., MCA from Delhi University" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+                        
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Services You Offer</label>
+                            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <label class="flex items-center space-x-2 border rounded-md p-2 hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="services" value="essay_writing" class="rounded text-purple-600 focus:ring-purple-500">
+                                    <span class="text-sm">Essay Writing</span>
+                                </label>
+                                <label class="flex items-center space-x-2 border rounded-md p-2 hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="services" value="proofreading" class="rounded text-purple-600 focus:ring-purple-500">
+                                    <span class="text-sm">Proofreading</span>
+                                </label>
+                                <label class="flex items-center space-x-2 border rounded-md p-2 hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="services" value="tutoring" class="rounded text-purple-600 focus:ring-purple-500">
+                                    <span class="text-sm">Tutoring</span>
+                                </label>
+                                <label class="flex items-center space-x-2 border rounded-md p-2 hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="services" value="code_debugging" class="rounded text-purple-600 focus:ring-purple-500">
+                                    <span class="text-sm">Code Debugging</span>
+                                </label>
+                                 <label class="flex items-center space-x-2 border rounded-md p-2 hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="services" value="research_paper" class="rounded text-purple-600 focus:ring-purple-500">
+                                    <span class="text-sm">Research Papers</span>
+                                </label>
+                                 <label class="flex items-center space-x-2 border rounded-md p-2 hover:bg-gray-50 cursor-pointer">
+                                    <input type="checkbox" name="services" value="presentations" class="rounded text-purple-600 focus:ring-purple-500">
+                                    <span class="text-sm">Presentations</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Your Top Skills/Subjects (comma separated)</label>
+                            <input type="text" placeholder="e.g., Data Structures, Python, Calculus" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                        </div>
+
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Short Bio</label>
+                            <textarea rows="3" placeholder="Tell students a little about yourself..." class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500"></textarea>
+                        </div>
+                    </div>
+                     <div class="flex items-center justify-between mt-6 gap-4">
+                        <button type="button" class="back-btn w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-full shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">Back</button>
+                        <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 transition-all transform hover:-translate-y-1">Create Account</button>
+                    </div>
+                </div>
+
+                <p class="text-center text-sm text-gray-600">
+                    Already have an account? <a href="./login.html" class="font-medium text-purple-600 hover:underline">Sign In</a>
+                </p>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            const form = document.getElementById('signup-form');
+            const steps = Array.from(form.querySelectorAll('.step'));
+            let currentStep = 0;
+            let selectedRole = '';
+
+            const roleCards = form.querySelectorAll('.role-card');
+            roleCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    roleCards.forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                    selectedRole = card.dataset.role;
+                    document.getElementById('next-to-step-2').disabled = false;
+                });
+            });
+
+            const showStep = (stepIndex) => {
+                steps.forEach((step, index) => {
+                    step.classList.toggle('hidden', index !== stepIndex);
+                });
+                currentStep = stepIndex;
+            };
+
+            form.querySelector('#next-to-step-2').addEventListener('click', () => {
+                showStep(1);
+            });
+            
+            form.querySelector('#next-to-step-3').addEventListener('click', () => {
+                document.getElementById('student-profile').classList.toggle('hidden', selectedRole !== 'student');
+                document.getElementById('writer-profile').classList.toggle('hidden', selectedRole !== 'writer');
+                showStep(2);
+            });
+
+            form.querySelectorAll('.back-btn').forEach(btn => {
+                btn.addEventListener('click', () => showStep(currentStep - 1));
+            });
+
+            const profilePicInput = document.getElementById('profile-picture');
+            const profilePreview = document.getElementById('profile-preview');
+            const fullNameInput = document.getElementById('fullname');
+
+            if (profilePicInput && profilePreview) {
+                profilePicInput.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            profilePreview.src = e.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            if(fullNameInput && profilePreview) {
+                fullNameInput.addEventListener('input', () => {
+                    if (profilePicInput.files.length === 0) {
+                       profilePreview.src = `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(fullNameInput.value)}`;
+                    }
+                });
+            }
+        });
+        
+    </script>
+</body>
+</html>
+

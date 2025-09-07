@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Guidance - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: 262 83% 61%;
+            --secondary: 210 40% 97%;
+            --muted-foreground: 220 15% 40%;
+            --border: 214.3 31.8% 91.4%;
+            --card: 0 0% 100%;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F2F5;
+        }
+        .text-primary { color: hsl(var(--primary)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary-foreground { color: white; }
+        .ring-primary { --tw-ring-color: hsl(var(--primary)); }
+        .border-primary { border-color: hsl(var(--primary)); }
+        .accent-primary { accent-color: hsl(var(--primary)); }
+        .bg-secondary { background-color: hsl(var(--secondary)); }
+
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .modal-content { animation: slide-up 0.3s ease-out; }
+        @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .quiz-step { display: none; }
+        .quiz-step.active { display: block; animation: fade-in 0.5s ease; }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+        .option-card.selected { border-color: hsl(var(--primary)); background-color: hsla(var(--primary), 0.05); transform: scale(1.02); }
+        .progress-line::before { content:''; position: absolute; left: 1rem; top: 1.5rem; bottom: -1rem; width: 2px; background-color: #e5e7eb; z-index: -1; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- =========== Top Navigation (Reused) =========== -->
+    <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+        <div class="px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 -mb-px">
+                 <div class="flex items-center space-x-4">
+                    <a href="#" class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span><span class="font-extrabold tracking-tight text-xl hidden sm:inline">StudyScribe</span></a>
+                </div>
+                 <div class="flex items-center space-x-3">
+                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="bell" class="w-5 h-5 text-gray-500"></i></button>
+                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="message-square" class="w-5 h-5 text-gray-500"></i></button>
+                    <div class="relative" id="profile-dropdown-container">
+                        <button id="profile-dropdown-btn" class="flex items-center space-x-2">
+                            <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" alt="User avatar">
+                            <span class="hidden md:inline text-sm font-medium">Dev Singh</span><i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                        </button>
+                        <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a><a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <!-- =========== Page Header =========== -->
+        <section class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">🎯 Career Guidance & Roadmaps</h1>
+            <p class="mt-2 text-lg text-gray-500">Discover your path, build skills, and plan your future.</p>
+            <div class="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="open-quiz-modal" class="bg-primary text-white font-semibold py-3 px-6 rounded-full flex items-center justify-center gap-2 btn-anim">
+                    <i data-lucide="file-question" class="w-5 h-5"></i>
+                    Take Career Quiz
+                </button>
+                <a href="#roadmaps" class="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-full flex items-center justify-center gap-2 btn-anim">
+                    <i data-lucide="library" class="w-5 h-5"></i>
+                    Browse Roadmaps
+                </a>
+            </div>
+        </section>
+
+        <!-- =========== Roadmaps Section =========== -->
+        <section id="roadmaps">
+            <h2 class="text-2xl font-bold mb-6">Popular Roadmaps</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Cards for Web Dev, Data Science, Cybersecurity -->
+                <div class="bg-white rounded-lg shadow-sm border p-6 flex flex-col justify-between transition-all hover:shadow-lg hover:-translate-y-1">
+                    <div>
+                        <div class="flex items-center gap-4"><div class="bg-primary/10 p-3 rounded-lg"><i data-lucide="globe" class="w-6 h-6 text-primary"></i></div><h3 class="font-bold text-lg">Web Development</h3></div>
+                        <p class="text-sm text-gray-500 mt-2">Become a full-stack developer.</p>
+                        <div class="flex items-center gap-4 text-xs text-gray-500 mt-4"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">6 months</span><span class="bg-green-100 text-green-800 px-2 py-0.5 rounded-full">Beginner</span></div>
+                    </div>
+                    <button class="open-roadmap-modal mt-6 w-full text-sm font-semibold text-primary hover:underline text-left">Explore →</button>
+                </div>
+                <div class="bg-white rounded-lg shadow-sm border p-6 flex flex-col justify-between transition-all hover:shadow-lg hover:-translate-y-1">
+                    <div>
+                        <div class="flex items-center gap-4"><div class="bg-primary/10 p-3 rounded-lg"><i data-lucide="bar-chart-3" class="w-6 h-6 text-primary"></i></div><h3 class="font-bold text-lg">Data Science</h3></div>
+                        <p class="text-sm text-gray-500 mt-2">Master data analysis and ML.</p>
+                        <div class="flex items-center gap-4 text-xs text-gray-500 mt-4"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">9 months</span><span class="bg-orange-100 text-orange-800 px-2 py-0.5 rounded-full">Intermediate</span></div>
+                    </div>
+                    <button class="open-roadmap-modal mt-6 w-full text-sm font-semibold text-primary hover:underline text-left">Explore →</button>
+                </div>
+                 <div class="bg-white rounded-lg shadow-sm border p-6 flex flex-col justify-between transition-all hover:shadow-lg hover:-translate-y-1">
+                    <div>
+                        <div class="flex items-center gap-4"><div class="bg-primary/10 p-3 rounded-lg"><i data-lucide="shield" class="w-6 h-6 text-primary"></i></div><h3 class="font-bold text-lg">Cybersecurity</h3></div>
+                        <p class="text-sm text-gray-500 mt-2">Protect digital assets and systems.</p>
+                        <div class="flex items-center gap-4 text-xs text-gray-500 mt-4"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">12 months</span><span class="bg-red-100 text-red-800 px-2 py-0.5 rounded-full">Advanced</span></div>
+                    </div>
+                    <button class="open-roadmap-modal mt-6 w-full text-sm font-semibold text-primary hover:underline text-left">Explore →</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========== Featured Notes & Papers (NEW) =========== -->
+        <section class="mt-16">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold">Featured Notes & Papers</h2>
+                <a href="#" class="text-sm font-semibold text-primary hover:underline">Browse All →</a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
+                   <div class="p-4"><h3 class="font-bold truncate">Data Structures Full Notes</h3><p class="text-xs text-gray-500">Computer Science</p></div>
+                   <div class="px-4 pb-4 space-y-2">
+                       <div class="flex items-center text-sm"><span class="flex items-center gap-1.5"><i data-lucide="user-circle" class="w-4 h-4 text-gray-400"></i>Priya S.</span></div>
+                       <div class="flex items-center text-sm"><span class="flex items-center gap-1.5"><i data-lucide="star" class="w-4 h-4 text-amber-400 fill-current"></i>4.9 (1.2k)</span></div>
+                   </div>
+                   <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-primary">₹150</span><button class="text-sm font-semibold text-primary hover:underline">View</button></div>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
+                   <div class="p-4"><h3 class="font-bold truncate">GATE CSE 2023 Paper</h3><p class="text-xs text-gray-500">Competitive Exam</p></div>
+                   <div class="px-4 pb-4 space-y-2">
+                       <div class="flex items-center text-sm"><span class="flex items-center gap-1.5"><i data-lucide="user-circle" class="w-4 h-4 text-gray-400"></i>Rohan D.</span></div>
+                       <div class="flex items-center text-sm"><span class="flex items-center gap-1.5"><i data-lucide="star" class="w-4 h-4 text-amber-400 fill-current"></i>4.8 (890)</span></div>
+                   </div>
+                   <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-green-600">Free</span><button class="text-sm font-semibold text-primary hover:underline">Download</button></div>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
+                   <div class="p-4"><h3 class="font-bold truncate">Cybersecurity Fundamentals</h3><p class="text-xs text-gray-500">Cybersecurity</p></div>
+                   <div class="px-4 pb-4 space-y-2">
+                       <div class="flex items-center text-sm"><span class="flex items-center gap-1.5"><i data-lucide="user-circle" class="w-4 h-4 text-gray-400"></i>Anjali M.</span></div>
+                       <div class="flex items-center text-sm"><span class="flex items-center gap-1.5"><i data-lucide="star" class="w-4 h-4 text-amber-400 fill-current"></i>4.9 (950)</span></div>
+                   </div>
+                   <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-primary">₹200</span><button class="text-sm font-semibold text-primary hover:underline">View</button></div>
+                </div>
+                <!-- Card 4 -->
+                <div class="bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1">
+                   <div class="p-4"><h3 class="font-bold truncate">IELTS Writing Samples</h3><p class="text-xs text-gray-500">Competitive Exam</p></div>
+                   <div class="px-4 pb-4 space-y-2">
+                       <div class="flex items-center text-sm"><span class="flex items-center gap-1.5"><i data-lucide="user-circle" class="w-4 h-4 text-gray-400"></i>Casey N.</span></div>
+                       <div class="flex items-center text-sm"><span class="flex items-center gap-1.5"><i data-lucide="star" class="w-4 h-4 text-amber-400 fill-current"></i>5.0 (2.1k)</span></div>
+                   </div>
+                   <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-primary">₹300</span><button class="text-sm font-semibold text-primary hover:underline">View</button></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========== Success Stories Section =========== -->
+        <section class="mt-16">
+            <h2 class="text-2xl font-bold mb-6 text-center">Success Stories</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                 <div class="bg-white rounded-lg shadow-sm border p-6 text-center"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Anjali" alt="User" class="w-16 h-16 rounded-full mx-auto -mt-12 border-4 border-white"><p class="mt-4 text-gray-600 italic">"The Web Dev roadmap was a game-changer for my career. I landed an internship within 3 months!"</p><p class="mt-4 font-bold">- Anjali Mehta</p><p class="text-sm text-gray-500">Software Engineer Intern</p></div>
+                 <div class="bg-white rounded-lg shadow-sm border p-6 text-center"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Rohan" alt="User" class="w-16 h-16 rounded-full mx-auto -mt-12 border-4 border-white"><p class="mt-4 text-gray-600 italic">"Cracked the GATE exam thanks to the structured plan and resources available on StudyScribe."</p><p class="mt-4 font-bold">- Rohan Das</p><p class="text-sm text-gray-500">M.Tech Student, IIT Bombay</p></div>
+                 <div class="bg-white rounded-lg shadow-sm border p-6 text-center"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Casey" alt="User" class="w-16 h-16 rounded-full mx-auto -mt-12 border-4 border-white"><p class="mt-4 text-gray-600 italic">"As a freelance writer, the guidance here helped me structure my services and find high-paying clients."</p><p class="mt-4 font-bold">- Casey Nguyen</p><p class="text-sm text-gray-500">Top Rated Writer</p></div>
+            </div>
+        </section>
+
+        <!-- =========== Quick Resources Section =========== -->
+         <section class="mt-16">
+            <h2 class="text-2xl font-bold mb-6">Quick Resources & Tools</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="#" class="block p-6 bg-white rounded-lg border hover:shadow-lg transition-all"><h3 class="font-semibold flex items-center gap-2"><i data-lucide="file-text" class="w-5 h-5 text-primary"></i> Resume Templates</h3><p class="text-sm text-gray-500 mt-1">Get a head start with professional templates.</p></a>
+                <a href="#" class="block p-6 bg-white rounded-lg border hover:shadow-lg transition-all"><h3 class="font-semibold flex items-center gap-2"><i data-lucide="file-signature" class="w-5 h-5 text-primary"></i> Cover Letter Tips</h3><p class="text-sm text-gray-500 mt-1">Learn to write compelling cover letters.</p></a>
+                <a href="#" class="block p-6 bg-white rounded-lg border hover:shadow-lg transition-all"><h3 class="font-semibold flex items-center gap-2"><i data-lucide="briefcase" class="w-5 h-5 text-primary"></i> Interview Prep</h3><p class="text-sm text-gray-500 mt-1">Practice with common interview questions.</p></a>
+                <a href="#" class="block p-6 bg-white rounded-lg border hover:shadow-lg transition-all"><h3 class="font-semibold flex items-center gap-2"><i data-lucide="link" class="w-5 h-5 text-primary"></i> Internship Portals</h3><p class="text-sm text-gray-500 mt-1">Links to top internship search websites.</p></a>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-backdrop" class="hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"></div>
+    <div id="quiz-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"></div>
+    <div id="roadmap-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4"></div>
+    <div id="toast" class="hidden fixed top-5 right-5 bg-green-500 text-white py-2 px-5 rounded-lg shadow-lg flex items-center gap-2 z-[60]"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            const backdrop = document.getElementById('modal-backdrop');
+            const toast = document.getElementById('toast');
+            
+            const showToast = (message) => { /* ... */ };
+            document.getElementById('profile-dropdown-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profile-dropdown-menu').classList.toggle('hidden'); });
+            document.addEventListener('click', () => document.getElementById('profile-dropdown-menu').classList.add('hidden'));
+
+            // Career Quiz Modal
+            const quizModal = document.getElementById('quiz-modal');
+            let quizStep = 1;
+            const openQuizModal = () => { quizStep = 1; updateQuizModal(); quizModal.classList.remove('hidden'); backdrop.classList.remove('hidden'); };
+            const closeQuizModal = () => { quizModal.classList.add('hidden'); backdrop.classList.add('hidden'); };
+            document.getElementById('open-quiz-modal').addEventListener('click', openQuizModal);
+            
+            const updateQuizModal = () => {
+                 let content = '';
+                 if(quizStep === 1) content = `<div><h3 class="font-semibold mb-4">What's your primary interest?</h3><div class="grid grid-cols-2 gap-4"><button class="option-card border-2 p-4 rounded-lg">Tech</button><button class="option-card border-2 p-4 rounded-lg">Business</button></div></div>`;
+                 if(quizStep === 2) content = `<div><h3 class="font-semibold mb-4">How do you prefer to work?</h3><div class="grid grid-cols-2 gap-4"><button class="option-card border-2 p-4 rounded-lg">In a Team</button><button class="option-card border-2 p-4 rounded-lg">Solo</button></div></div>`;
+                 if(quizStep === 3) content = `<div class="text-center"><h3 class="font-semibold">Suggested Track: Web Developer</h3><p class="text-gray-500 mt-2">You seem to enjoy technology and teamwork!</p></div>`;
+                 
+                 quizModal.innerHTML = `<div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-lg"><div class="p-6 border-b flex justify-between items-center"><h2 class="text-2xl font-bold">Career Quiz</h2><button class="close-modal p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-6 h-6"></i></button></div><div class="p-6">${content}</div><div class="p-4 border-t flex justify-end"><button class="bg-primary text-white px-6 py-2 rounded-full font-semibold" id="quiz-next">${quizStep === 3 ? 'View Roadmap' : 'Next'}</button></div></div>`;
+                 lucide.createIcons();
+                 quizModal.querySelector('.close-modal').addEventListener('click', closeQuizModal);
+                 quizModal.querySelector('#quiz-next').addEventListener('click', () => { if (quizStep < 3) { quizStep++; updateQuizModal(); } else { closeQuizModal(); showToast("Quiz Completed 🎉"); } });
+            };
+
+             // Roadmap Modal
+            const roadmapModal = document.getElementById('roadmap-modal');
+            const openRoadmapModal = () => {
+                roadmapModal.innerHTML = `<div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col"><div class="p-6 border-b flex justify-between items-center"><h2 class="text-2xl font-bold">Web Development Roadmap</h2><button class="close-modal p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-6 h-6"></i></button></div><div class="p-6 flex-1 overflow-y-auto"><div class="relative pl-8"><div class="progress-line"></div><div class="relative mb-8"><div class="absolute top-0 -left-5 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center">1</div><h3 class="font-bold">Phase 1: Basics (2 Months)</h3><p class="text-sm text-gray-500">Learn HTML, CSS, JavaScript fundamentals.</p></div><div class="relative mb-8"><div class="absolute top-0 -left-5 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center">2</div><h3 class="font-bold">Phase 2: Frameworks (3 Months)</h3><p class="text-sm text-gray-500">Master a framework like React or Vue.</p></div></div></div></div>`;
+                lucide.createIcons();
+                roadmapModal.classList.remove('hidden'); backdrop.classList.remove('hidden');
+                roadmapModal.querySelector('.close-modal').addEventListener('click', () => { roadmapModal.classList.add('hidden'); backdrop.classList.add('hidden'); });
+            };
+            document.querySelectorAll('.open-roadmap-modal').forEach(b => b.addEventListener('click', openRoadmapModal));
+        });
+    </script>
+</body>
+</html>
+

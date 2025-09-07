@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <style>
+        :root {
+            --primary: 262 83% 61%;
+            --nav-bg: #111827;
+            --nav-text: #9CA3AF;
+            --nav-hover-bg: #374151;
+            --nav-active-bg: hsl(var(--primary));
+            --nav-active-text: white;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #F3F4F6; }
+        .sidebar-link { transition: all 0.2s ease-in-out; }
+        .sidebar-link.active { background-color: var(--nav-active-bg); color: var(--nav-active-text); }
+        .sidebar-link:not(.active):hover { background-color: var(--nav-hover-bg); color: white; }
+        
+        main > section { display: none; }
+        main > section.active { display: block; animation: fade-in 0.5s ease; }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .tab-btn.active { border-color: hsl(var(--primary)); color: hsl(var(--primary)); background-color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .table-auto th { text-align: left; }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 bg-gray-900 text-gray-400 w-64 space-y-6 py-7 px-2 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-40">
+            <a href="#" class="text-white flex items-center space-x-2 px-4">
+                <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span>
+                <span class="text-2xl font-extrabold">Admin</span>
+            </a>
+            <nav id="sidebar-nav">
+                <a href="#overview" class="sidebar-link active w-full flex items-center space-x-2 py-2.5 px-4 rounded-lg"><i data-lucide="home" class="w-5 h-5"></i><span>Overview</span></a>
+                <a href="#users" class="sidebar-link w-full flex items-center space-x-2 py-2.5 px-4 rounded-lg"><i data-lucide="users" class="w-5 h-5"></i><span>User Management</span></a>
+                <a href="#questions" class="sidebar-link w-full flex items-center space-x-2 py-2.5 px-4 rounded-lg"><i data-lucide="file-text" class="w-5 h-5"></i><span>Questions</span></a>
+                <a href="#disputes" class="sidebar-link w-full flex items-center space-x-2 py-2.5 px-4 rounded-lg"><i data-lucide="shield-alert" class="w-5 h-5"></i><span>Dispute Center</span></a>
+                <a href="#payments" class="sidebar-link w-full flex items-center space-x-2 py-2.5 px-4 rounded-lg"><i data-lucide="banknote" class="w-5 h-5"></i><span>Payments</span></a>
+                <a href="#content" class="sidebar-link w-full flex items-center space-x-2 py-2.5 px-4 rounded-lg"><i data-lucide="archive" class="w-5 h-5"></i><span>Content Control</span></a>
+                <a href="#settings" class="sidebar-link w-full flex items-center space-x-2 py-2.5 px-4 rounded-lg"><i data-lucide="settings" class="w-5 h-5"></i><span>Settings</span></a>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white shadow-sm flex justify-between items-center p-4">
+                <button id="sidebar-toggle" class="md:hidden text-gray-500 focus:outline-none">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                <h1 id="header-title" class="text-xl font-semibold">Welcome, Admin 👑</h1>
+                <div><!-- User profile can go here --></div>
+            </header>
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                <!-- Section content will be dynamically shown here -->
+                <section id="overview" class="active"></section>
+                <section id="users"></section>
+                <section id="questions"></section>
+                <section id="disputes"></section>
+                <section id="payments"></section>
+                <section id="content"></section>
+                <section id="settings"></section>
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // Sidebar and Page Navigation
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebarNav = document.getElementById('sidebar-nav');
+            const sections = document.querySelectorAll('main > section');
+            const headerTitle = document.getElementById('header-title');
+
+            sidebarToggle.addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
+
+            const navigateTo = (hash) => {
+                 if (!hash) hash = '#overview';
+                 const targetLink = sidebarNav.querySelector(`a[href="${hash}"]`);
+                 if (!targetLink) return;
+
+                 sidebarNav.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+                 targetLink.classList.add('active');
+
+                 headerTitle.innerHTML = targetLink.innerHTML;
+                 lucide.createIcons();
+                 
+                 const targetId = hash.substring(1);
+                 sections.forEach(s => s.classList.toggle('active', s.id === targetId));
+                 if (window.innerWidth < 768) sidebar.classList.add('-translate-x-full');
+            };
+
+            sidebarNav.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (!link) return;
+                e.preventDefault();
+                window.location.hash = link.getAttribute('href');
+            });
+            
+            window.addEventListener('hashchange', () => navigateTo(window.location.hash));
+            
+            // D3 Charts
+            const renderCharts = () => {
+                d3.select("#user-growth-chart").select("svg").remove();
+                d3.select("#earnings-chart").select("svg").remove();
+                
+                const userGrowthData = [{date: "Jan", v:100}, {date: "Feb", v:150}, {date:"Mar",v:130}, {date:"Apr",v:200}];
+                const earningsData = [{label: "Platform", value: 30}, {label: "Writers", value: 70}];
+
+                const margin = {top: 20, right: 20, bottom: 30, left: 40};
+                const width = 400 - margin.left - margin.right;
+                const height = 200 - margin.top - margin.bottom;
+                const svgLine = d3.select("#user-growth-chart").append("svg").attr("width", "100%").attr("height", height + margin.top + margin.bottom).attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+                const x = d3.scaleBand().range([0, width]).domain(userGrowthData.map(d=>d.date)).padding(0.1);
+                svgLine.append("g").attr("transform", `translate(0, ${height})`).call(d3.axisBottom(x));
+                const y = d3.scaleLinear().domain([0, d3.max(userGrowthData, d=>d.v)]).range([height, 0]);
+                svgLine.append("g").call(d3.axisLeft(y));
+                svgLine.append("path").datum(userGrowthData).attr("fill", "none").attr("stroke", "hsl(var(--primary))").attr("stroke-width", 2).attr("d", d3.line().x(d=>x(d.date) + x.bandwidth()/2).y(d=>y(d.v)));
+
+                const radius = Math.min(200, 200) / 2 - 10;
+                const svgPie = d3.select("#earnings-chart").append("svg").attr("width", 200).attr("height", 200).append("g").attr("transform", `translate(100,100)`);
+                const color = d3.scaleOrdinal().domain(earningsData.map(d=>d.label)).range(["hsl(var(--primary))", "#e5e7eb"]);
+                const pie = d3.pie().value(d=>d.value);
+                svgPie.selectAll('whatever').data(pie(earningsData)).enter().append('path').attr('d', d3.arc().innerRadius(0).outerRadius(radius)).attr('fill', d=>color(d.data.label));
+            };
+
+            // Content Injection
+            const loadContent = () => {
+                document.getElementById('overview').innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow"><p class="text-sm text-gray-500">Total Users</p><p class="text-2xl font-bold">1,250</p></div>
+                        <div class="bg-white p-4 rounded-lg shadow"><p class="text-sm text-gray-500">Active Writers</p><p class="text-2xl font-bold">150</p></div>
+                        <div class="bg-white p-4 rounded-lg shadow"><p class="text-sm text-gray-500">Tasks Posted</p><p class="text-2xl font-bold">2,890</p></div>
+                        <div class="bg-white p-4 rounded-lg shadow"><p class="text-sm text-gray-500">Payments</p><p class="text-2xl font-bold">₹5,50,000</p></div>
+                        <div class="bg-white p-4 rounded-lg shadow"><p class="text-sm text-gray-500">Pending Disputes</p><p class="text-2xl font-bold text-red-500">5</p></div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                         <div class="lg:col-span-2 bg-white p-4 rounded-lg shadow"><h3 class="font-semibold mb-2">User Growth</h3><div id="user-growth-chart"></div></div>
+                         <div class="bg-white p-4 rounded-lg shadow"><h3 class="font-semibold mb-2">Earnings Distribution</h3><div id="earnings-chart" class="flex justify-center"></div></div>
+                    </div>`;
+                document.getElementById('users').innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h2 class="text-2xl font-bold mb-4">User Management</h2>
+                        <div class="border-b">
+                            <nav class="-mb-px flex space-x-6" id="user-tabs">
+                                <button class="tab-btn active py-2 px-1 border-b-2 font-medium" data-tab="students">Students</button>
+                                <button class="tab-btn py-2 px-1 border-b-2 font-medium text-gray-500" data-tab="writers">Writers</button>
+                            </nav>
+                        </div>
+                        <div class="mt-4">
+                            <div class="tab-content active" id="students">
+                                <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b"> <th class="p-2">Name</th> <th class="p-2">Email</th> <th class="p-2">Tasks</th> <th class="p-2">Status</th> <th class="p-2">Actions</th></tr></thead><tbody><tr class="border-b"> <td class="p-2">Dev Singh</td> <td class="p-2">dev@example.com</td> <td class="p-2">3</td> <td class="p-2"><span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Active</span></td> <td class="p-2 space-x-2"><button class="text-yellow-600">Suspend</button><button class="text-red-600">Block</button></td></tr></tbody></table></div>
+                            </div>
+                            <div class="tab-content" id="writers">
+                                <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b"> <th class="p-2">Name</th> <th class="p-2">Expertise</th> <th class="p-2">Rating</th> <th class="p-2">Status</th> <th class="p-2">Actions</th></tr></thead><tbody><tr class="border-b"> <td class="p-2">Priya Sharma</td> <td class="p-2">Physics</td> <td class="p-2">4.9</td> <td class="p-2"><span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Approved</span></td> <td class="p-2 space-x-2"><button class="text-red-600">Block</button></td></tr></tbody></table></div>
+                            </div>
+                        </div>
+                    </div>`;
+                document.getElementById('questions').innerHTML = `<div class="bg-white p-6 rounded-lg shadow"><h2 class="text-2xl font-bold mb-4">Question Management</h2><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b"><th class="p-2">ID</th><th class="p-2">Student</th><th class="p-2">Writer</th><th class="p-2">Status</th><th class="p-2">Actions</th></tr></thead><tbody><tr class="border-b"><td class="p-2">#2890</td><td class="p-2">Dev Singh</td><td class="p-2">Priya Sharma</td><td class="p-2"><span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">In Progress</span></td><td class="p-2"><button class="text-blue-600">View</button></td></tr></tbody></table></div></div>`;
+                document.getElementById('disputes').innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h2 class="text-2xl font-bold mb-4">Dispute Center (1)</h2>
+                        <div class="space-y-4">
+                            <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+                                <p class="font-bold">Dispute #1023 - "Data Structures Assignment"</p>
+                                <p class="text-sm mt-2"><b>Student Complaint:</b> The submitted work was incomplete.</p>
+                                <p class="text-sm mt-1"><b>Writer's Defense:</b> The student did not provide all necessary files.</p>
+                                <div class="mt-4 flex gap-2"><button class="bg-blue-500 text-white text-xs px-3 py-1 rounded-full">Refund Student</button><button class="bg-green-500 text-white text-xs px-3 py-1 rounded-full">Pay Writer</button><button class="bg-gray-500 text-white text-xs px-3 py-1 rounded-full">Split Payment</button></div>
+                            </div>
+                        </div>
+                    </div>`;
+                document.getElementById('payments').innerHTML = `<div class="bg-white p-6 rounded-lg shadow"><h2 class="text-2xl font-bold mb-4">Payments & Wallets</h2><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b"><th class="p-2">Date</th><th class="p-2">User</th><th class="p-2">Type</th><th class="p-2">Amount</th></tr></thead><tbody><tr class="border-b"><td class="p-2">07 Sep 2025</td><td class="p-2">Priya Sharma</td><td class="p-2">Withdrawal</td><td class="p-2 text-red-500">- ₹5,000</td></tr><tr class="border-b"><td class="p-2">06 Sep 2025</td><td class="p-2">Dev Singh</td><td class="p-2">Deposit</td><td class="p-2 text-green-500">+ ₹1,500</td></tr></tbody></table></div></div>`;
+                document.getElementById('content').innerHTML = `<div class="bg-white p-6 rounded-lg shadow"><h2 class="text-2xl font-bold mb-4">Content Control</h2><div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b"><th class="p-2">Title</th><th class="p-2">Uploader</th><th class="p-2">Status</th><th class="p-2">Actions</th></tr></thead><tbody><tr class="border-b"><td class="p-2">Advanced Algorithms Notes</td><td class="p-2">Priya S.</td><td class="p-2"><span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Pending Approval</span></td><td class="p-2 space-x-2"><button class="text-green-600">Approve</button><button class="text-red-600">Reject</button></td></tr></tbody></table></div></div>`;
+                document.getElementById('settings').innerHTML = `<div class="bg-white p-6 rounded-lg shadow"><h2 class="text-2xl font-bold mb-4">Settings</h2><div class="space-y-4 max-w-md"><div><label class="text-sm font-medium">Platform Commission (%)</label><input type="number" value="15" class="mt-1 w-full p-2 border rounded-md"></div><div><label class="text-sm font-medium">Manage Payment Gateways</label><div class="mt-2 space-y-1"><label class="flex items-center"><input type="checkbox" checked class="rounded mr-2"> Enable Stripe</label><label class="flex items-center"><input type="checkbox" checked class="rounded mr-2"> Enable Razorpay</label></div></div><button class="bg-primary text-white font-semibold py-2 px-5 rounded-full">Save Settings</button></div></div>`;
+
+                renderCharts();
+                
+                // Init tabs for User Management
+                const userTabsContainer = document.getElementById('user-tabs');
+                if (userTabsContainer) {
+                    const tabButtons = userTabsContainer.querySelectorAll('.tab-btn');
+                    const tabContents = document.querySelectorAll('#users .tab-content');
+                    tabButtons.forEach(button => {
+                        button.addEventListener('click', () => {
+                            tabButtons.forEach(btn => btn.classList.remove('active'));
+                            button.classList.add('active');
+                            const tabId = button.dataset.tab;
+                            tabContents.forEach(content => {
+                                content.classList.toggle('active', content.id === tabId);
+                            });
+                        });
+                    });
+                }
+            };
+
+            loadContent();
+            navigateTo(window.location.hash);
+        });
+    </script>
+</body>
+</html>
+

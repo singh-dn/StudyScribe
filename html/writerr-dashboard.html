@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writer Dashboard - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: 262 83% 61%;
+            --secondary: 210 40% 97%;
+            --muted-foreground: 220 15% 40%;
+            --border: 214.3 31.8% 91.4%;
+            --card: 0 0% 100%;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F2F5;
+        }
+        .text-primary { color: hsl(var(--primary)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary-foreground { color: white; }
+        .bg-secondary { background-color: hsl(var(--secondary)); }
+        .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+        .border-border { border-color: hsl(var(--border)); }
+        .bg-card { background-color: hsl(var(--card)); }
+        .ring-primary { --tw-ring-color: hsl(var(--primary)); }
+        .border-primary { border-color: hsl(var(--primary)); }
+
+        /* --- Animations & Transitions --- */
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Skeleton Loader */
+        .skeleton { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; background-color: #e2e8f0; }
+        @keyframes pulse { 50% { opacity: .5; } }
+
+        /* Custom Tabs */
+        .tab-btn.active {
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+            background-color: white;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- =========== Main Content =========== -->
+        <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+            
+            <!-- =========== Top Navigation =========== -->
+            <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+                <div class="px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16 -mb-px">
+                        <!-- Header: Left side -->
+                        <div class="flex items-center space-x-4">
+                            <a href="#" class="flex items-center gap-2">
+                                <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span>
+                                <span class="font-extrabold tracking-tight text-xl hidden sm:inline">StudyScribe</span>
+                            </a>
+                            <nav class="hidden lg:flex items-center space-x-1 bg-gray-100 p-1 rounded-full">
+                                <a href="#" class="px-3 py-1 text-sm font-medium rounded-full bg-white text-primary shadow">Dashboard</a>
+                                <a href="#available-tasks" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Available Tasks</a>
+                                <a href="#my-tasks" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">My Tasks</a>
+                                <a href="#notes-upload" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Notes</a>
+                                <a href="#earnings" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Earnings</a>
+                            </nav>
+                        </div>
+
+                        <!-- Header: Right side -->
+                        <div class="flex items-center space-x-3">
+                             <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="bell" class="w-5 h-5 text-gray-500"></i></button>
+                             <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="message-square" class="w-5 h-5 text-gray-500"></i></button>
+                            <div class="relative" id="profile-dropdown-container">
+                                <button id="profile-dropdown-btn" class="flex items-center space-x-2">
+                                    <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" alt="Writer avatar">
+                                    <span class="hidden md:inline text-sm font-medium">Priya Sharma</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                                </button>
+                                <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Withdraw</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+                
+                <!-- Welcome & Quick Stats -->
+                <div class="reveal mb-8">
+                    <h1 class="text-2xl md:text-3xl font-bold mb-4">Welcome back, Priya ✍️</h1>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm border"><p class="text-sm text-muted-foreground">Active Tasks</p><p class="text-2xl font-bold">2</p></div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border"><p class="text-sm text-muted-foreground">Completed</p><p class="text-2xl font-bold">35</p></div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border"><p class="text-sm text-muted-foreground">Month's Earnings</p><p class="text-2xl font-bold">₹12,500</p></div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm border"><p class="text-sm text-muted-foreground">Your Rating</p><div class="flex items-center gap-1"><i data-lucide="star" class="w-5 h-5 text-amber-400 fill-current"></i><span class="text-2xl font-bold">4.9</span></div></div>
+                    </div>
+                </div>
+
+                <!-- Main Dashboard Grid -->
+                <div class="grid grid-cols-12 gap-6">
+                    <!-- Left Column: Tasks -->
+                    <div class="col-span-12 lg:col-span-8 space-y-6">
+                        <!-- Available Tasks -->
+                        <section id="available-tasks" class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 100ms;">
+                            <h2 class="text-xl font-bold mb-4">Available Tasks</h2>
+                            <div class="space-y-4">
+                                <!-- Task Card -->
+                                <div class="bg-gray-50 border rounded-lg p-4 transition-shadow hover:shadow-md">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-bold text-lg">Write 15-page assignment on AI Ethics</h3>
+                                            <p class="text-sm text-muted-foreground">Posted by a student • 3 days left</p>
+                                        </div>
+                                        <span class="text-lg font-bold text-primary">₹500-₹1000</span>
+                                    </div>
+                                    <p class="text-sm mt-2 border-l-2 border-primary pl-3">The assignment requires a detailed analysis of ethical challenges in modern AI, including bias in algorithms, privacy concerns...</p>
+                                    <div class="mt-4 flex gap-2">
+                                        <button class="text-sm font-semibold bg-primary text-white px-4 py-2 rounded-full btn-anim">Apply</button>
+                                        <button class="text-sm font-semibold bg-secondary text-gray-700 px-4 py-2 rounded-full btn-anim">Save</button>
+                                    </div>
+                                </div>
+                                <!-- Empty state example -->
+                                <!-- <div class="text-center py-10"><i data-lucide="rocket" class="w-12 h-12 mx-auto text-gray-300"></i><p class="mt-2 text-sm text-gray-500">No new tasks available. Check back later!</p></div> -->
+                            </div>
+                        </section>
+                        <!-- My Tasks -->
+                        <section id="my-tasks" class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 200ms;">
+                            <h2 class="text-xl font-bold">My Tasks</h2>
+                            <!-- Tabs -->
+                            <div class="mt-4 border-b">
+                                <nav class="-mb-px flex space-x-6" id="my-tasks-tabs">
+                                    <button class="tab-btn active py-2 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="in-progress">In Progress</button>
+                                    <button class="tab-btn py-2 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="submitted">Submitted</button>
+                                    <button class="tab-btn py-2 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" data-tab="completed">Completed</button>
+                                </nav>
+                            </div>
+                            <!-- Tab Content -->
+                            <div class="mt-4">
+                                <div class="tab-content active" id="in-progress">
+                                    <div class="bg-gray-50 border rounded-lg p-4">
+                                        <h3 class="font-bold">Data Structures Assignment</h3>
+                                        <p class="text-xs text-red-500 mb-2">Deadline: Tomorrow</p>
+                                        <div class="w-full bg-gray-200 rounded-full h-1.5 my-2"><div class="bg-blue-600 h-1.5 rounded-full" style="width: 45%"></div></div>
+                                        <p class="text-xs text-gray-500">Status: In Progress</p>
+                                        <div class="mt-3 flex gap-2"><button class="text-xs font-semibold bg-secondary px-3 py-1.5 rounded-full btn-anim">Submit Work</button></div>
+                                    </div>
+                                </div>
+                                <div class="tab-content" id="submitted">
+                                    <div class="text-center py-10"><p class="text-sm text-gray-500">No tasks are currently waiting for approval.</p></div>
+                                </div>
+                                <div class="tab-content" id="completed">
+                                     <div class="bg-gray-50 border rounded-lg p-4 opacity-70">
+                                        <h3 class="font-bold">Literature Essay</h3>
+                                        <p class="text-xs text-gray-500 mb-2">Completed on: 5 Sep 2025</p>
+                                        <p class="text-xs font-semibold text-green-600">Payment Released: ₹1,200</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- Right Column: Earnings, Notes -->
+                    <div class="col-span-12 lg:col-span-4 space-y-6">
+                        <!-- Earnings & Withdrawals -->
+                        <section id="earnings" class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 100ms;">
+                            <h2 class="text-xl font-bold">Earnings</h2>
+                            <div class="mt-4 space-y-2">
+                                <div class="flex justify-between items-baseline"><p class="text-sm text-muted-foreground">Available Balance</p><p class="text-lg font-bold">₹8,500</p></div>
+                                <div class="flex justify-between items-baseline"><p class="text-sm text-muted-foreground">Pending (in Escrow)</p><p class="text-lg font-bold">₹3,200</p></div>
+                                <div class="flex justify-between items-baseline"><p class="text-sm text-muted-foreground">Total Earned</p><p class="text-lg font-bold">₹45,700</p></div>
+                            </div>
+                            <button class="mt-4 w-full bg-primary text-white font-semibold py-2 px-4 rounded-full text-sm btn-anim">Withdraw Funds</button>
+                            <p class="text-xs text-center mt-2 text-muted-foreground">Min. ₹200 to withdraw.</p>
+                        </section>
+                        <!-- Notes Upload -->
+                        <section id="notes-upload" class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 200ms;">
+                            <h2 class="text-xl font-bold">Your Notes</h2>
+                            <button class="mt-4 w-full bg-secondary text-gray-700 font-semibold py-2 px-4 rounded-full text-sm btn-anim">Upload New Note</button>
+                            <div class="mt-4 space-y-3">
+                                <div class="flex justify-between items-center text-sm">
+                                    <p class="font-medium">Advanced Algorithms Notes</p>
+                                    <div class="text-right"><p class="font-bold text-green-600">+₹1,250</p><p class="text-xs text-muted-foreground">50 downloads</p></div>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-2 bg-amber-50 border-l-4 border-amber-400 text-amber-800 text-xs rounded">Only upload original content. Plagiarism will result in a ban.</div>
+                        </section>
+                        <!-- Reviews -->
+                         <section id="reviews" class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 300ms;">
+                           <h2 class="text-xl font-bold mb-4">Your Reviews</h2>
+                           <div class="flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-200">
+                               <i data-lucide="award" class="w-6 h-6 text-green-600"></i>
+                               <p class="text-sm font-semibold text-green-800">You're a Top Rated Writer!</p>
+                           </div>
+                           <div class="mt-4 space-y-3">
+                               <div class="text-sm"><div class="flex items-center gap-0.5 text-amber-400"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div><p class="mt-1">"Excellent work on the essay!"</p></div>
+                           </div>
+                        </section>
+                        <!-- Boost Visibility (NEW) -->
+                        <section class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 400ms;">
+                            <h2 class="text-xl font-bold mb-4">Boost Your Visibility</h2>
+                            <p class="text-sm text-muted-foreground mb-4">Get noticed by more students by contributing to the community.</p>
+                            <div class="space-y-3">
+                                <a href="#" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border">
+                                    <p class="font-semibold text-sm flex items-center gap-2"><i data-lucide="upload-cloud" class="w-4 h-4 text-primary"></i> Upload High-Quality Notes</p>
+                                </a>
+                                <a href="#" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border">
+                                    <p class="font-semibold text-sm flex items-center gap-2"><i data-lucide="map" class="w-4 h-4 text-primary"></i> Create a Career Roadmap</p>
+                                </a>
+                                <a href="#" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border">
+                                    <p class="font-semibold text-sm flex items-center gap-2"><i data-lucide="graduation-cap" class="w-4 h-4 text-primary"></i> Offer Career Guidance</p>
+                                </a>
+                            </div>
+                        </section>
+                        <!-- Connect with Students (NEW) -->
+                        <section class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 500ms;">
+                           <h2 class="text-xl font-bold mb-4">Connect with Students</h2>
+                           <div class="p-4 bg-primary/10 rounded-lg text-center">
+                               <i data-lucide="video" class="w-10 h-10 text-primary mx-auto"></i>
+                               <p class="mt-2 text-sm font-semibold">Offer Live Sessions</p>
+                               <p class="text-xs text-muted-foreground mt-1">Host 1:1 video calls for tutoring, doubt clearing, and live project help.</p>
+                               <button class="mt-3 text-xs font-semibold bg-primary text-white px-3 py-1.5 rounded-full btn-anim">Manage Sessions</button>
+                           </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
+            
+            <footer class="border-t py-4 px-8 text-center text-sm text-gray-500">
+                <p>&copy; 2025 StudyScribe. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed top-5 right-5 bg-green-500 text-white py-2 px-5 rounded-lg shadow-lg flex items-center gap-2 z-50">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+        <span id="toast-message"></span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Profile Dropdown
+            const profileBtn = document.getElementById('profile-dropdown-btn');
+            const profileMenu = document.getElementById('profile-dropdown-menu');
+            profileBtn.addEventListener('click', (e) => { e.stopPropagation(); profileMenu.classList.toggle('hidden'); });
+            document.addEventListener('click', () => profileMenu.classList.add('hidden'));
+
+            // Scroll Reveal
+            const revealElements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+            }, { threshold: 0.1 });
+            revealElements.forEach(el => observer.observe(el));
+
+            // My Tasks Tabs
+            const tabsContainer = document.getElementById('my-tasks-tabs');
+            if (tabsContainer) {
+                const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
+                const tabContents = document.querySelectorAll('#my-tasks .tab-content');
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        const tabId = button.dataset.tab;
+                        tabContents.forEach(content => {
+                            content.classList.toggle('active', content.id === tabId);
+                        });
+                    });
+                });
+            }
+
+            // --- DEMO: Show Toast on Apply button click ---
+            const applyBtn = document.querySelector('#available-tasks button');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            if (applyBtn) {
+                 applyBtn.addEventListener('click', () => {
+                    toastMessage.textContent = "You applied for the task successfully 🎉";
+                    toast.classList.remove('hidden');
+                    setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

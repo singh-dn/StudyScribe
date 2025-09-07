@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { --primary: 262 83% 61%; }
+        body { font-family: 'Inter', sans-serif; background-color: #F7F9FC; }
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .aurora-bg::before, .aurora-bg::after { content: ''; position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.2; }
+        .aurora-bg::before { width: 600px; height: 600px; background-color: #C4B5FD; top: -150px; left: -250px; animation: pulse-aurora-1 15s infinite alternate; }
+        .aurora-bg::after { width: 500px; height: 500px; background-color: #A5F3FC; bottom: -200px; right: -250px; animation: pulse-aurora-2 15s infinite alternate; animation-delay: 3s; }
+        @keyframes pulse-aurora-1 { from { transform: scale(0.9) translate(-20px, 30px); } to { transform: scale(1.1) translate(20px, -30px); } }
+        @keyframes pulse-aurora-2 { from { transform: scale(0.9) translate(20px, -30px); } to { transform: scale(1.1) translate(-20px, 30px); } }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="aurora-bg"></div>
+    <div class="w-full max-w-md p-8 space-y-6">
+        <div class="text-center">
+             <a href="./index.html" class="inline-flex items-center gap-3">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-md">SS</span>
+              <span class="font-extrabold tracking-tight text-2xl">StudyScribe</span>
+            </a>
+            <h1 class="text-3xl font-bold mt-6">Forgot Your Password?</h1>
+            <p class="text-gray-500">No worries! Enter your email and we'll send you a reset link.</p>
+        </div>
+
+        <div id="form-container" class="bg-white/70 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg p-8">
+            <form id="reset-form" class="space-y-6">
+                <div>
+                    <label for="email-forgot" class="text-sm font-medium text-gray-700">Registered Email</label>
+                    <input id="email-forgot" name="email-forgot" type="email" autocomplete="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                
+                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all transform hover:-translate-y-1">Send Reset Link</button>
+                
+                <p class="text-center text-sm text-gray-600">
+                    Remembered your password? <a href="./login.html" class="font-medium text-purple-600 hover:underline">Back to Login</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- Success Toast/Message -->
+        <div id="success-toast" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl relative text-center" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">We’ve sent a reset link to your email.</span>
+            <div class="mt-4">
+                <a href="./login.html" class="font-medium text-green-800 hover:underline">← Back to Login</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+        const resetForm = document.getElementById('reset-form');
+        const formContainer = document.getElementById('form-container');
+        const successToast = document.getElementById('success-toast');
+
+        resetForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // In a real app, you would send the email here.
+            // We'll simulate the success state.
+            formContainer.classList.add('hidden');
+            successToast.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
+

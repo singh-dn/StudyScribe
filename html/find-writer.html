@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: 262 83% 61%;
+            --secondary: 210 40% 97%;
+            --muted-foreground: 220 15% 40%;
+            --border: 214.3 31.8% 91.4%;
+            --card: 0 0% 100%;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F2F5;
+        }
+        .text-primary { color: hsl(var(--primary)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary-foreground { color: white; }
+        .ring-primary { --tw-ring-color: hsl(var(--primary)); }
+        .border-primary { border-color: hsl(var(--primary)); }
+
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- =========== Top Navigation (Reused) =========== -->
+    <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 -mb-px">
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span><span class="font-extrabold tracking-tight text-xl hidden sm:inline">StudyScribe</span></a>
+                </div>
+                <div class="flex items-center space-x-3">
+                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="bell" class="w-5 h-5 text-gray-500"></i></button>
+                    <div class="relative" id="profile-dropdown-container">
+                        <button id="profile-dropdown-btn" class="flex items-center space-x-2">
+                            <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" alt="User avatar">
+                            <span class="hidden md:inline text-sm font-medium">Dev Singh</span><i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                        </button>
+                        <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a><a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <!-- =========== Page Header =========== -->
+        <section class="text-center mb-16">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Next-Level Features</h1>
+            <p class="mt-2 text-lg text-gray-500 max-w-2xl mx-auto">Explore the powerful new tools and community features we're building to help you succeed.</p>
+        </section>
+
+        <!-- 1. Gamification & Community Building -->
+        <section class="reveal mb-16">
+            <h2 class="text-3xl font-bold text-center mb-8">Engage, Earn & Compete</h2>
+            <div class="grid lg:grid-cols-3 gap-8 items-start">
+                <!-- Badges -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border text-center">
+                    <i data-lucide="award" class="w-12 h-12 text-primary mx-auto"></i>
+                    <h3 class="text-xl font-bold mt-4">Earn Badges</h3>
+                    <p class="text-sm text-gray-500 mt-2">Get recognized for your contributions. Earn badges for uploading notes, getting top reviews, and helping others.</p>
+                    <div class="flex justify-center gap-4 mt-4">
+                        <div class="p-2 bg-gray-100 rounded-full" title="Top Contributor"><i data-lucide="file-plus-2" class="w-6 h-6 text-gray-600"></i></div>
+                        <div class="p-2 bg-gray-100 rounded-full" title="5-Star Writer"><i data-lucide="star" class="w-6 h-6 text-amber-500"></i></div>
+                        <div class="p-2 bg-gray-100 rounded-full" title="Community Helper"><i data-lucide="users" class="w-6 h-6 text-gray-600"></i></div>
+                    </div>
+                </div>
+                <!-- Leaderboard -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm border">
+                     <h3 class="text-xl font-bold">Monthly Leaderboard</h3>
+                     <p class="text-sm text-gray-500 mt-1">See who's making the biggest impact on the platform.</p>
+                     <table class="w-full mt-4 text-sm">
+                        <thead><tr class="border-b"><th class="text-left py-2">Rank</th><th class="text-left py-2">User</th><th class="text-left py-2">Role</th><th class="text-right py-2">Points</th></tr></thead>
+                        <tbody>
+                            <tr class="border-b"><td class="py-2">🥇 1</td><td class="py-2 font-semibold">Priya S.</td><td class="py-2">Writer</td><td class="text-right font-bold">1,250</td></tr>
+                            <tr class="border-b"><td class="py-2">🥈 2</td><td class="py-2 font-semibold">Rohan D.</td><td class="py-2">Student</td><td class="text-right font-bold">980</td></tr>
+                            <tr><td class="py-2">🥉 3</td><td class="py-2 font-semibold">Anjali M.</td><td class="py-2">Writer</td><td class="text-right font-bold">950</td></tr>
+                        </tbody>
+                     </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. AI-Powered Features -->
+        <section class="reveal mb-16">
+             <h2 class="text-3xl font-bold text-center mb-8">AI-Powered Tools for Success</h2>
+             <div class="grid lg:grid-cols-2 gap-8">
+                 <!-- AI Study Buddy -->
+                 <div class="bg-white p-6 rounded-lg shadow-sm border">
+                    <h3 class="text-xl font-bold flex items-center gap-2"><i data-lucide="bot" class="w-6 h-6 text-primary"></i> AI Study Buddy</h3>
+                    <div class="mt-4 bg-gray-100 rounded-lg p-4 h-64 flex flex-col">
+                        <div class="flex-1 space-y-3 text-sm">
+                            <p class="bg-primary text-white p-2 rounded-lg self-end max-w-xs ml-auto">Summarize my 'Lecture Notes.pdf'</p>
+                            <p class="bg-white p-2 rounded-lg self-start max-w-xs">Of course! The key points are: 1) The role of algorithms in modern computing... 2) Big O notation for complexity analysis... Would you like me to create flashcards?</p>
+                        </div>
+                        <input type="text" placeholder="Ask a question about your documents..." class="mt-2 w-full p-2 border rounded-full text-sm">
+                    </div>
+                 </div>
+                 <!-- Plagiarism Checker -->
+                  <div class="bg-white p-6 rounded-lg shadow-sm border">
+                    <h3 class="text-xl font-bold flex items-center gap-2"><i data-lucide="scan-search" class="w-6 h-6 text-primary"></i> Plagiarism Checker</h3>
+                    <textarea placeholder="Paste your text here or upload a file..." rows="6" class="mt-4 w-full p-2 border rounded-lg text-sm"></textarea>
+                    <button class="mt-2 w-full bg-primary text-white font-semibold py-2 rounded-full btn-anim">Check Originality</button>
+                 </div>
+             </div>
+        </section>
+        
+        <!-- 3. Local Search Feature (NEW) -->
+        <section class="reveal mb-16">
+            <h2 class="text-3xl font-bold text-center mb-2">Find Writers from Your College & City</h2>
+            <p class="text-lg text-gray-500 text-center max-w-2xl mx-auto mb-8">Connect with writers from a familiar background who understand your curriculum and local context.</p>
+            <div class="bg-white p-6 rounded-lg shadow-sm border">
+                <!-- Search UI Mockup -->
+                <div class="grid sm:grid-cols-2 gap-4 lg:flex lg:items-center lg:gap-2">
+                    <div class="relative flex-1">
+                         <i data-lucide="map-pin" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                         <input type="text" placeholder="Search by Location (e.g., Mumbai)" class="w-full pl-12 pr-4 py-3 border rounded-full">
+                    </div>
+                     <div class="relative flex-1">
+                         <i data-lucide="school" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                         <input type="text" placeholder="Search by College/University" class="w-full pl-12 pr-4 py-3 border rounded-full">
+                    </div>
+                    <button class="bg-primary text-white font-semibold py-3 px-6 rounded-full flex items-center justify-center gap-2 btn-anim lg:w-auto w-full">
+                        <i data-lucide="search" class="w-5 h-5"></i> Search
+                    </button>
+                </div>
+                <!-- Results Mockup -->
+                <div class="mt-6 border-t pt-6">
+                    <h4 class="font-semibold">Showing results for "Mumbai University":</h4>
+                    <div class="grid md:grid-cols-2 gap-4 mt-4">
+                        <div class="bg-gray-50 p-4 rounded-lg border flex items-center gap-4">
+                            <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Amit" class="w-12 h-12 rounded-full flex-shrink-0" />
+                            <div>
+                                <p class="font-bold">Amit Kulkarni</p>
+                                <p class="text-xs text-primary font-semibold">Mumbai University | Mumbai, IN</p>
+                            </div>
+                        </div>
+                         <div class="bg-gray-50 p-4 rounded-lg border flex items-center gap-4">
+                            <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Sneha" class="w-12 h-12 rounded-full flex-shrink-0" />
+                            <div>
+                                <p class="font-bold">Sneha Rao</p>
+                                <p class="text-xs text-primary font-semibold">Mumbai University | Thane, IN</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Trust & Safety -->
+        <section class="reveal">
+            <h2 class="text-3xl font-bold text-center mb-8">Build Trust & Confidence</h2>
+            <div class="grid lg:grid-cols-2 gap-8">
+                 <!-- Advanced Verification -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border">
+                     <h3 class="text-xl font-bold mb-4">Advanced Writer Verification</h3>
+                     <div class="bg-gray-50 p-4 rounded-lg border transition-all hover:shadow-md hover:border-primary">
+                        <div class="flex items-center gap-4">
+                            <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" class="w-16 h-16 rounded-full" />
+                            <div>
+                                <h4 class="font-bold text-lg">Priya Sharma</h4>
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    <span class="text-xs font-semibold flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full"><i data-lucide="badge-check" class="w-3 h-3"></i>ID Verified</span>
+                                    <span class="text-xs font-semibold flex items-center gap-1 bg-green-100 text-green-800 px-2 py-0.5 rounded-full"><i data-lucide="graduation-cap" class="w-3 h-3"></i>Degree Verified</span>
+                                    <span class="text-xs font-semibold flex items-center gap-1 bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full"><i data-lucide="award" class="w-3 h-3"></i>Platform Expert</span>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+                <!-- Transparent Analytics -->
+                <div class="bg-white p-6 rounded-lg shadow-sm border">
+                     <h3 class="text-xl font-bold mb-4">Transparent Analytics</h3>
+                     <div class="space-y-3">
+                         <div><p class="text-sm font-medium flex justify-between"><span>On-Time Delivery</span><span>99%</span></p><div class="w-full bg-gray-200 rounded-full h-2 mt-1"><div class="bg-green-500 h-2 rounded-full" style="width: 99%"></div></div></div>
+                         <div><p class="text-sm font-medium flex justify-between"><span>Repeat Clients</span><span>75%</span></p><div class="w-full bg-gray-200 rounded-full h-2 mt-1"><div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div></div></div>
+                         <div><p class="text-sm font-medium flex justify-between"><span>Avg. Response Time</span><span>~ 2 hours</span></p><div class="w-full bg-gray-200 rounded-full h-2 mt-1"><div class="bg-purple-500 h-2 rounded-full" style="width: 90%"></div></div></div>
+                     </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-16 border-t py-8 px-4 text-center text-sm text-gray-500">
+        <p>&copy; 2025 StudyScribe. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Profile Dropdown
+            document.getElementById('profile-dropdown-btn').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profile-dropdown-menu').classList.toggle('hidden'); });
+            document.addEventListener('click', () => document.getElementById('profile-dropdown-menu').classList.add('hidden'));
+
+            // Scroll Reveal
+            const revealElements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+            }, { threshold: 0.1 });
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
+

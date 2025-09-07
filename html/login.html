@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { --primary: 262 83% 61%; --muted-foreground: 220 15% 40%; }
+        body { font-family: 'Inter', sans-serif; background-color: #F7F9FC; }
+        .aurora-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .aurora-bg::before, .aurora-bg::after { content: ''; position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.2; }
+        .aurora-bg::before { width: 600px; height: 600px; background-color: #C4B5FD; top: -150px; left: -250px; animation: pulse-aurora-1 15s infinite alternate; }
+        .aurora-bg::after { width: 500px; height: 500px; background-color: #A5F3FC; bottom: -200px; right: -250px; animation: pulse-aurora-2 15s infinite alternate; animation-delay: 3s; }
+        @keyframes pulse-aurora-1 { from { transform: scale(0.9) translate(-20px, 30px); } to { transform: scale(1.1) translate(20px, -30px); } }
+        @keyframes pulse-aurora-2 { from { transform: scale(0.9) translate(20px, -30px); } to { transform: scale(1.1) translate(-20px, 30px); } }
+        .btn-primary { background-color: hsl(var(--primary)); }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+    <div class="aurora-bg"></div>
+    <div class="w-full max-w-md p-8 space-y-6">
+        <div class="text-center">
+            <a href="./index.html" class="inline-flex items-center gap-3">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-md">SS</span>
+              <span class="font-extrabold tracking-tight text-2xl">StudyScribe</span>
+            </a>
+            <h1 class="text-3xl font-bold mt-6">Welcome Back!</h1>
+            <p class="text-gray-500">Please enter your details to sign in.</p>
+        </div>
+
+        <div class="bg-white/70 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg p-8">
+            <form class="space-y-6">
+                <div>
+                    <label for="email" class="text-sm font-medium text-gray-700">Email / Username</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                </div>
+
+                <div class="relative">
+                    <div class="flex items-center justify-between">
+                        <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+                        <a href="./forgot-password.html" class="text-sm text-purple-600 hover:underline">Forgot Password?</a>
+                    </div>
+                    <input id="password" name="password" type="password" autocomplete="current-password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 top-6 pr-3 flex items-center text-gray-400">
+                        <i id="eye-icon" data-lucide="eye" class="h-5 w-5"></i>
+                        <i id="eye-off-icon" data-lucide="eye-off" class="h-5 w-5 hidden"></i>
+                    </button>
+                </div>
+                
+                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all transform hover:-translate-y-1">Login</button>
+
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-gray-300"></div>
+                    <span class="flex-shrink mx-4 text-gray-400 text-sm">Or continue with</span>
+                    <div class="flex-grow border-t border-gray-300"></div>
+                </div>
+
+                <button type="button" class="w-full flex items-center justify-center py-2.5 px-4 border border-gray-300 rounded-full shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all transform hover:-translate-y-1">
+                    <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"></path><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.222 0-9.519-3.317-11.28-7.944l-6.522 5.025A20.02 20.02 0 0 0 24 44z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.574l6.19 5.238C42.028 35.14 44 30.023 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
+                    Continue with Google
+                </button>
+
+                <p class="text-center text-sm text-gray-600">
+                    Don't have an account? <a href="./signup.html" class="font-medium text-purple-600 hover:underline">Sign Up</a>
+                </p>
+            </form>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
+        const eyeOffIcon = document.getElementById('eye-off-icon');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            eyeIcon.classList.toggle('hidden');
+            eyeOffIcon.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: 262 83% 61%;
+            --secondary: 210 40% 97%;
+            --muted-foreground: 220 15% 40%;
+            --border: 214.3 31.8% 91.4%;
+            --card: 0 0% 100%;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F2F5; /* A slightly different bg for the dashboard area */
+        }
+        .text-primary { color: hsl(var(--primary)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary-foreground { color: white; }
+        .bg-secondary { background-color: hsl(var(--secondary)); }
+        .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+        .border-border { border-color: hsl(var(--border)); }
+        .bg-card { background-color: hsl(var(--card)); }
+
+        /* --- Animations & Transitions --- */
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        /* Skeleton Loader */
+        .skeleton { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; background-color: #e2e8f0; }
+        @keyframes pulse { 50% { opacity: .5; } }
+
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px;}
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a5b4fc; }
+        
+        /* Chat Sidebar */
+        #chat-sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        #chat-sidebar.open {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- =========== Main Content =========== -->
+        <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+            
+            <!-- =========== Top Navigation =========== -->
+            <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+                <div class="px-4 sm:px-6 lg:px-8">
+                    <div class="flex items-center justify-between h-16 -mb-px">
+                        <!-- Header: Left side -->
+                        <div class="flex items-center space-x-4">
+                            <a href="#" class="flex items-center gap-2">
+                                <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span>
+                                <span class="font-extrabold tracking-tight text-xl hidden sm:inline">StudyScribe</span>
+                            </a>
+                            <nav class="hidden lg:flex items-center space-x-1 bg-gray-100 p-1 rounded-full">
+                                <a href="#" class="px-3 py-1 text-sm font-medium rounded-full bg-white text-primary shadow">Dashboard</a>
+                                <a href="#" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Find Writers</a>
+                                <a href="#" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">My Tasks</a>
+                                <a href="#" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Notes</a>
+                            </nav>
+                        </div>
+
+                        <!-- Header: Right side -->
+                        <div class="flex items-center space-x-3">
+                             <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative">
+                                <i data-lucide="bell" class="w-5 h-5 text-gray-500"></i>
+                                <span class="absolute top-1.5 right-1.5 flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                </span>
+                            </button>
+                             <button id="chat-sidebar-toggle" class="p-2 rounded-full hover:bg-gray-100 transition-colors relative">
+                                <i data-lucide="message-square" class="w-5 h-5 text-gray-500"></i>
+                                 <span class="absolute top-1.5 right-1.5 flex h-2 w-2">
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                </span>
+                            </button>
+                            <div class="relative" id="profile-dropdown-container">
+                                <button id="profile-dropdown-btn" class="flex items-center space-x-2">
+                                    <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" alt="User avatar">
+                                    <span class="hidden md:inline text-sm font-medium">Dev Singh</span>
+                                    <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                                </button>
+                                <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Wallet</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+                
+                <!-- Welcome banner -->
+                <div class="relative bg-gradient-to-r from-purple-600 to-cyan-500 p-6 rounded-2xl shadow-lg overflow-hidden mb-8 reveal">
+                    <div class="relative z-10">
+                        <h1 class="text-2xl md:text-3xl text-white font-bold mb-2">Welcome back, Dev 👋</h1>
+                        <p class="text-purple-100">You have 2 tasks in progress and 1 note pending review.</p>
+                        <div class="mt-6 flex flex-wrap gap-4">
+                            <button class="bg-white/20 text-white backdrop-blur-sm font-semibold py-2 px-4 rounded-full flex items-center gap-2 hover:bg-white/30 transition-all btn-anim"><i data-lucide="plus" class="w-4 h-4"></i>Post New Task</button>
+                            <button class="bg-white/20 text-white backdrop-blur-sm font-semibold py-2 px-4 rounded-full flex items-center gap-2 hover:bg-white/30 transition-all btn-anim"><i data-lucide="search" class="w-4 h-4"></i>Find a Writer</button>
+                            <button class="bg-white/20 text-white backdrop-blur-sm font-semibold py-2 px-4 rounded-full flex items-center gap-2 hover:bg-white/30 transition-all btn-anim"><i data-lucide="book-copy" class="w-4 h-4"></i>Browse Notes</button>
+                             <button class="bg-white/20 text-white backdrop-blur-sm font-semibold py-2 px-4 rounded-full flex items-center gap-2 hover:bg-white/30 transition-all btn-anim"><i data-lucide="video" class="w-4 h-4"></i>Book Live Session</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Overview -->
+                <section class="mb-8 reveal" style="animation-delay: 100ms;">
+                    <h2 class="text-xl font-bold mb-4">Your Tasks</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- In Progress Column -->
+                        <div class="bg-white rounded-lg shadow-sm p-4 border">
+                            <h3 class="font-semibold mb-3 flex items-center gap-2"><span class="w-2 h-2 bg-blue-500 rounded-full"></span> In Progress (2)</h3>
+                            <div class="space-y-4">
+                                <div class="bg-gray-50 p-3 rounded-lg border">
+                                    <h4 class="font-bold">Data Structures Assignment</h4>
+                                    <p class="text-sm text-gray-500 mb-2">Assigned to: <span class="font-medium text-gray-700">Priya Sharma</span></p>
+                                    <p class="text-xs text-red-600 font-medium mb-3">Deadline: Tomorrow, 11:59 PM</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-semibold">₹1,500</span>
+                                        <button class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full hover:bg-blue-200 open-chat-btn">Chat</button>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg border">
+                                    <h4 class="font-bold">Calculus Problem Set</h4>
+                                    <p class="text-sm text-gray-500 mb-2">Assigned to: <span class="font-medium text-gray-700">Rohan Das</span></p>
+                                    <p class="text-xs text-gray-600 font-medium mb-3">Deadline: 2 days</p>
+                                     <div class="flex items-center justify-between">
+                                        <span class="text-sm font-semibold">₹800</span>
+                                        <button class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full hover:bg-blue-200 open-chat-btn">Chat</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Completed Column -->
+                         <div class="bg-white rounded-lg shadow-sm p-4 border">
+                            <h3 class="font-semibold mb-3 flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full"></span> Completed (1)</h3>
+                            <div class="space-y-4">
+                                <div class="bg-gray-50 p-3 rounded-lg border opacity-70">
+                                    <h4 class="font-bold">Literature Essay</h4>
+                                    <p class="text-sm text-gray-500 mb-2">Completed by: <span class="font-medium text-gray-700">Anjali Mehta</span></p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm font-semibold">₹1,200</span>
+                                        <button class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full hover:bg-green-200">View Delivery</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Empty State Column -->
+                         <div class="bg-white rounded-lg shadow-sm p-4 border">
+                            <h3 class="font-semibold mb-3 flex items-center gap-2"><span class="w-2 h-2 bg-red-500 rounded-full"></span> Disputes (0)</h3>
+                            <div class="text-center py-8">
+                                <i data-lucide="folder-x" class="w-10 h-10 mx-auto text-gray-300"></i>
+                                <p class="mt-2 text-sm text-gray-500">No disputes found.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Other Sections -->
+                <div class="grid grid-cols-12 gap-6">
+                    <!-- Find Writers & Notes (Left Column) -->
+                    <div class="col-span-12 xl:col-span-8 space-y-6">
+                        <!-- Find Writers Section -->
+                        <section class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 200ms;">
+                             <h3 class="text-xl font-bold mb-4">Discover Top Writers</h3>
+                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <!-- Skeleton Loader -->
+                                <div class="w-full bg-gray-50 p-4 rounded-lg border space-y-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded-full skeleton"></div>
+                                        <div class="flex-1 space-y-2">
+                                            <div class="h-4 w-3/4 rounded skeleton"></div>
+                                            <div class="h-3 w-1/2 rounded skeleton"></div>
+                                        </div>
+                                    </div>
+                                    <div class="h-3 w-full rounded skeleton"></div>
+                                    <div class="h-3 w-5/6 rounded skeleton"></div>
+                                </div>
+                                <!-- Writer Card -->
+                                <div class="w-full bg-gray-50 p-4 rounded-lg border transition-all hover:shadow-md hover:border-primary">
+                                    <div class="flex items-center gap-3">
+                                        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" class="w-12 h-12 rounded-full" />
+                                        <div>
+                                            <h4 class="font-bold">Priya Sharma</h4>
+                                            <div class="text-xs text-green-600 font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>Top Rated</div>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">Subjects: Physics, Chemistry</p>
+                                    <div class="flex justify-between items-center mt-3">
+                                        <span class="text-sm font-bold text-primary">₹500/hr</span>
+                                        <button class="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary/20">View</button>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-gray-50 p-4 rounded-lg border transition-all hover:shadow-md hover:border-primary">
+                                    <div class="flex items-center gap-3">
+                                        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Rohan" class="w-12 h-12 rounded-full" />
+                                        <div>
+                                            <h4 class="font-bold">Rohan Das</h4>
+                                            <div class="text-xs text-blue-600 font-semibold">Verified</div>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">Subjects: Mathematics, CS</p>
+                                    <div class="flex justify-between items-center mt-3">
+                                        <span class="text-sm font-bold text-primary">₹450/hr</span>
+                                        <button class="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary/20">View</button>
+                                    </div>
+                                </div>
+                             </div>
+                        </section>
+                        
+                         <!-- Notes Marketplace Section (NEW & IMPROVED) -->
+                        <section class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 300ms;">
+                             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                <h3 class="text-xl font-bold">Notes Marketplace</h3>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <!-- Filters Here -->
+                                    <select class="text-sm border-gray-200 rounded-full focus:ring-primary focus:border-primary"><option>Subject</option></select>
+                                    <select class="text-sm border-gray-200 rounded-full focus:ring-primary focus:border-primary"><option>Price</option></select>
+                                    <select class="text-sm border-gray-200 rounded-full focus:ring-primary focus:border-primary"><option>Format</option></select>
+                                    <select class="text-sm border-gray-200 rounded-full focus:ring-primary focus:border-primary"><option>Ratings</option></select>
+                                </div>
+                             </div>
+                             <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <!-- Note Card -->
+                                <div class="bg-gray-50 rounded-lg border overflow-hidden group">
+                                    <div class="h-24 bg-gradient-to-r from-teal-100 to-cyan-100 flex items-center justify-center">
+                                        <i data-lucide="file-text" class="w-10 h-10 text-teal-600"></i>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-bold truncate">Advanced Algorithms Notes</h4>
+                                        <p class="text-xs text-gray-500">By Priya Sharma • 45 Pages</p>
+                                        <div class="flex items-center gap-1 text-xs mt-1 text-amber-500"><i data-lucide="star" class="w-3 h-3 fill-current"></i> 4.9 (120 reviews)</div>
+                                        <div class="flex justify-between items-center mt-3">
+                                            <span class="text-sm font-bold text-primary">₹250</span>
+                                            <div class="flex gap-2">
+                                                <button class="text-xs font-semibold hover:text-primary">Preview</button>
+                                                <button class="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary/20">Buy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Note Card -->
+                                 <div class="bg-gray-50 rounded-lg border overflow-hidden group">
+                                    <div class="h-24 bg-gradient-to-r from-amber-100 to-orange-100 flex items-center justify-center">
+                                        <i data-lucide="pen-tool" class="w-10 h-10 text-amber-600"></i>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-bold truncate">Handwritten Calculus Notes</h4>
+                                        <p class="text-xs text-gray-500">By Rohan Das • 30 Pages</p>
+                                        <div class="flex items-center gap-1 text-xs mt-1 text-amber-500"><i data-lucide="star" class="w-3 h-3 fill-current"></i> 4.8 (95 reviews)</div>
+                                        <div class="flex justify-between items-center mt-3">
+                                            <span class="text-sm font-bold text-green-600">Free</span>
+                                            <button class="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary/20">Preview</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Note Card -->
+                                 <div class="bg-gray-50 rounded-lg border overflow-hidden group">
+                                    <div class="h-24 bg-gradient-to-r from-rose-100 to-pink-100 flex items-center justify-center">
+                                        <i data-lucide="book-open" class="w-10 h-10 text-rose-600"></i>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-bold truncate">Modern Literature Summary</h4>
+                                        <p class="text-xs text-gray-500">By Anjali Mehta • 22 Pages</p>
+                                        <div class="flex items-center gap-1 text-xs mt-1 text-amber-500"><i data-lucide="star" class="w-3 h-3 fill-current"></i> 4.7 (78 reviews)</div>
+                                        <div class="flex justify-between items-center mt-3">
+                                            <span class="text-sm font-bold text-primary">₹180</span>
+                                            <button class="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full hover:bg-primary/20">Buy</button>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </section>
+                    </div>
+                    <!-- Wallet & Roadmaps (Right Column) -->
+                    <div class="col-span-12 xl:col-span-4 space-y-6">
+                        <!-- Wallet Section -->
+                        <section class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 200ms;">
+                            <h3 class="text-xl font-bold mb-4">Your Wallet</h3>
+                            <div class="bg-gray-50 border rounded-lg p-4">
+                                <p class="text-sm text-gray-500">Available Balance</p>
+                                <p class="text-3xl font-bold text-gray-800">₹5,250.00</p>
+                                <button class="mt-4 w-full bg-primary text-white font-semibold py-2 px-4 rounded-full text-sm btn-anim">Add Funds</button>
+                            </div>
+                             <div class="mt-4 space-y-2">
+                                <h4 class="font-semibold text-sm">Recent Transactions</h4>
+                                <div class="flex justify-between text-xs">
+                                    <p class="text-gray-600">Payment for "Calculus Set"</p>
+                                    <p class="font-medium text-red-500">- ₹800</p>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <p class="text-gray-600">Added Funds</p>
+                                    <p class="font-medium text-green-500">+ ₹2,000</p>
+                                </div>
+                             </div>
+                        </section>
+                        <!-- Roadmaps & Career Guidance -->
+                         <section class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 300ms;">
+                            <h3 class="text-xl font-bold mb-4">Career Guidance</h3>
+                            <div class="space-y-3">
+                                <a href="#" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border">
+                                    <p class="font-semibold text-sm">Roadmap for Web Development</p>
+                                </a>
+                                <a href="#" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border">
+                                    <p class="font-semibold text-sm">Roadmap for Data Science</p>
+                                </a>
+                                 <a href="#" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border">
+                                    <p class="font-semibold text-sm">Competitive Exams Prep</p>
+                                </a>
+                            </div>
+                            <div class="mt-4 text-center p-3 bg-primary/10 rounded-lg">
+                                <p class="text-sm text-primary font-medium">Not sure where to start?</p>
+                                <a href="#" class="text-xs font-semibold hover:underline">Take our 2-minute career quiz!</a>
+                            </div>
+                         </section>
+                    </div>
+                </div>
+                 
+            </main>
+            
+            <!-- Simple Footer -->
+            <footer class="border-t py-4 px-8 text-center text-sm text-gray-500">
+                <p>&copy; 2025 StudyScribe. All rights reserved. | <a href="#" class="hover:underline">Terms of Service</a> | <a href="#" class="hover:underline">Privacy Policy</a></p>
+            </footer>
+
+        </div>
+    </div>
+    
+    <!-- Floating Help Button -->
+    <button class="fixed bottom-6 right-6 bg-primary text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg btn-anim z-40">
+        <i data-lucide="help-circle" class="w-7 h-7"></i>
+    </button>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed top-5 right-5 bg-green-500 text-white py-2 px-5 rounded-lg shadow-lg flex items-center gap-2 z-50">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+        <span id="toast-message">Success!</span>
+    </div>
+
+    <!-- Chat Sidebar -->
+    <div id="chat-sidebar" class="fixed top-0 right-0 h-full w-80 bg-white border-l z-40 p-4 transform flex flex-col">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-lg">Recent Chats</h3>
+            <button id="close-chat-sidebar" class="p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <div class="flex-1 overflow-y-auto custom-scrollbar -mr-2 pr-2">
+            <!-- Chat items -->
+            <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 open-chat-btn">
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" class="w-10 h-10 rounded-full"/>
+                <div>
+                    <p class="font-semibold text-sm">Priya Sharma</p>
+                    <p class="text-xs text-gray-500 truncate">Okay, I'll have the draft ready by...</p>
+                </div>
+            </a>
+             <a href="#" class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 open-chat-btn">
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Rohan" class="w-10 h-10 rounded-full"/>
+                <div>
+                    <p class="font-semibold text-sm">Rohan Das</p>
+                    <p class="text-xs text-gray-500 truncate">Sure, I can help with that.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div id="chat-sidebar-overlay" class="hidden fixed inset-0 bg-black/20 z-30"></div>
+
+    <!-- Full Screen Chat Modal -->
+    <div id="chat-modal" class="hidden fixed inset-0 bg-gray-100 z-50 flex flex-col">
+        <!-- Chat Header -->
+        <div class="bg-white border-b p-3 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-3">
+                <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" class="w-10 h-10 rounded-full"/>
+                <div>
+                    <p class="font-bold">Priya Sharma</p>
+                    <p class="text-xs text-green-500">Online</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                 <button class="p-2 rounded-full hover:bg-gray-100"><i data-lucide="video" class="w-5 h-5 text-gray-600"></i></button>
+                 <button id="close-chat-modal" class="p-2 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-5 h-5 text-gray-600"></i></button>
+            </div>
+        </div>
+        <!-- Messages Area -->
+        <div class="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-4">
+            <!-- Received Message -->
+            <div class="flex gap-3 items-end max-w-lg"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" class="w-8 h-8 rounded-full"/><div class="bg-white p-3 rounded-lg rounded-bl-none shadow-sm border"><p class="text-sm">Hi Dev! I've started working on your Data Structures assignment. I should have the first draft ready for you by tomorrow evening. Let me know if you have any initial files to share.</p><p class="text-xs text-gray-400 text-right mt-1">10:30 AM</p></div></div>
+            <!-- Sent Message -->
+            <div class="flex gap-3 items-end max-w-lg ml-auto flex-row-reverse"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" class="w-8 h-8 rounded-full"/><div class="bg-primary text-white p-3 rounded-lg rounded-br-none shadow-sm"><p class="text-sm">That's great, Priya! Thanks for the update. I'm attaching the requirements PDF now.</p><p class="text-xs text-purple-200 text-right mt-1">10:32 AM</p></div></div>
+        </div>
+        <!-- Safety Note & Input -->
+        <div class="bg-white p-4 border-t">
+            <div class="text-center text-xs text-gray-400 p-2 bg-gray-100 rounded-lg mb-3">
+                <i data-lucide="shield" class="w-3 h-3 inline-block text-green-500"></i> Payment of ₹1,500 is held securely by StudyScribe until you approve the delivery.
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="p-2 rounded-full hover:bg-gray-100 text-gray-500"><i data-lucide="paperclip" class="w-5 h-5"></i></button>
+                <input type="text" placeholder="Type your message..." class="flex-1 w-full px-4 py-2 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"/>
+                <button class="p-2 rounded-full hover:bg-gray-100 text-gray-500"><i data-lucide="mic" class="w-5 h-5"></i></button>
+                <button class="p-2 rounded-full bg-primary text-white hover:bg-purple-700"><i data-lucide="send" class="w-5 h-5"></i></button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // Profile Dropdown
+            const profileBtn = document.getElementById('profile-dropdown-btn');
+            const profileMenu = document.getElementById('profile-dropdown-menu');
+            profileBtn.addEventListener('click', (e) => { e.stopPropagation(); profileMenu.classList.toggle('hidden'); });
+            document.addEventListener('click', () => profileMenu.classList.add('hidden'));
+
+            // Scroll Reveal
+            const revealElements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+            }, { threshold: 0.1 });
+            revealElements.forEach(el => observer.observe(el));
+            
+            // --- Toast Demo ---
+            const postTaskBtn = document.querySelector('button.flex.items-center.gap-2');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            if(postTaskBtn){
+                postTaskBtn.addEventListener('click', () => {
+                    toastMessage.textContent = "Task Posted Successfully 🎉";
+                    toast.classList.remove('hidden');
+                    setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+                });
+            }
+
+            // --- Chat Panel Logic ---
+            const chatSidebarToggle = document.getElementById('chat-sidebar-toggle');
+            const chatSidebar = document.getElementById('chat-sidebar');
+            const closeChatSidebar = document.getElementById('close-chat-sidebar');
+            const chatOverlay = document.getElementById('chat-sidebar-overlay');
+            const chatModal = document.getElementById('chat-modal');
+            const closeChatModal = document.getElementById('close-chat-modal');
+            const openChatButtons = document.querySelectorAll('.open-chat-btn');
+
+            const toggleChatSidebar = () => {
+                chatSidebar.classList.toggle('open');
+                chatOverlay.classList.toggle('hidden');
+            };
+
+            chatSidebarToggle.addEventListener('click', toggleChatSidebar);
+            closeChatSidebar.addEventListener('click', toggleChatSidebar);
+            chatOverlay.addEventListener('click', toggleChatSidebar);
+
+            const openChat = () => {
+                chatModal.classList.remove('hidden');
+                if (chatSidebar.classList.contains('open')) {
+                    toggleChatSidebar();
+                }
+            };
+            
+            openChatButtons.forEach(btn => btn.addEventListener('click', openChat));
+            closeChatModal.addEventListener('click', () => chatModal.classList.add('hidden'));
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,91 @@
+        /* --- From global.css --- */
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 262 83% 61%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 210 40% 97%;
+            --secondary-foreground: 230 21% 20%;
+            --muted: 220 14% 96%;
+            --muted-foreground: 220 15% 40%;
+            --accent: 198 100% 47%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 262 83% 61%;
+            --radius: 0.5rem;
+        }
+
+        .dark {
+            /* Dark mode variables would go here */
+        }
+
+        * {
+            border-color: hsl(var(--border));
+        }
+
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-family: 'Inter', sans-serif;   
+        }
+
+        /* --- Custom Tailwind configuration (simulated) --- */
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary { color: hsl(var(--primary)); }
+        .text-primary-foreground { color: hsl(var(--primary-foreground)); }
+        .bg-secondary { background-color: hsl(var(--secondary)); }
+        .text-secondary-foreground { color: hsl(var(--secondary-foreground)); }
+        .text-muted-foreground { color: hsl(var(--muted-foreground)); }
+        .bg-accent { background-color: hsl(var(--accent)); }
+        .border-border { border-color: hsl(var(--border)); }
+        .bg-background { background-color: hsl(var(--background)); }
+        .text-foreground { color: hsl(var(--foreground)); }
+        .bg-card { background-color: hsl(var(--card)); }
+        .text-card-foreground { color: hsl(var(--card-foreground)); }
+        .border-primary { border-color: hsl(var(--primary)); }
+        .hover\:bg-accent\/10:hover { background-color: hsla(var(--accent), 0.1); }
+        .focus-visible\:ring-primary:focus-visible { --tw-ring-color: hsl(var(--primary)); }
+        .from-primary { --tw-gradient-from: hsl(var(--primary)); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, hsla(var(--primary), 0)); }
+        .to-accent { --tw-gradient-to: hsl(var(--accent)); }
+        .from-indigo-500\/30 { --tw-gradient-from: rgba(99, 102, 241, 0.3); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(99, 102, 241, 0)); }
+        .from-pink-500\/30 { --tw-gradient-from: rgba(236, 72, 153, 0.3); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(236, 72, 153, 0)); }
+        .from-blue-500\/30 { --tw-gradient-from: rgba(59, 130, 246, 0.3); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(59, 130, 246, 0)); }
+        .from-teal-500\/30 { --tw-gradient-from: rgba(20, 184, 166, 0.3); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(20, 184, 166, 0)); }
+
+        /* --- Animations & Transitions --- */
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-anim { transition: all 0.2s ease-in-out; }
+        .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .btn-anim:active { transform: translateY(-1px); }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Header Scroll Effect --- */
+        #main-header.scrolled {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-bottom-color: transparent;
+        }
+        
+        /* --- Scrollbar Hiding --- */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }

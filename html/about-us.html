@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: 262 83% 61%;
+            --secondary: 210 40% 97%;
+            --muted-foreground: 220 15% 40%;
+            --border: 214.3 31.8% 91.4%;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; }
+        .text-primary { color: hsl(var(--primary)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary-foreground { color: white; }
+        .bg-secondary { background-color: hsl(var(--secondary)); }
+
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.215, 0.610, 0.355, 1), transform 0.8s cubic-bezier(0.215, 0.610, 0.355, 1); }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- =========== Top Navigation (Reused) =========== -->
+    <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 -mb-px">
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span><span class="font-extrabold tracking-tight text-xl hidden sm:inline">StudyScribe</span></a>
+                </div>
+                <div class="flex items-center space-x-3">
+                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="bell" class="w-5 h-5 text-gray-500"></i></button>
+                    <div class="relative" id="profile-dropdown-container">
+                        <button id="profile-dropdown-btn" class="flex items-center space-x-2">
+                            <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" alt="User avatar">
+                            <span class="hidden md:inline text-sm font-medium">Dev Singh</span><i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                        </button>
+                        <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a><a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <!-- 1. Hero Section -->
+        <section class="reveal relative bg-primary text-white rounded-2xl p-8 md:p-16 text-center overflow-hidden">
+            <div class="absolute inset-0 bg-black/20"></div>
+            <div class="relative z-10">
+                <h1 class="text-4xl md:text-5xl font-extrabold">About StudyScribe</h1>
+                <p class="mt-4 text-lg max-w-2xl mx-auto text-primary-foreground/80">Empowering students with guided solutions, verified writers, and a supportive community for academic excellence.</p>
+            </div>
+        </section>
+
+        <!-- 2. Our Story -->
+        <section class="reveal mt-16 grid md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl font-bold">Our Story</h2>
+                <p class="mt-4 text-gray-600">StudyScribe began when our founder, an MCA student himself, saw a gap. Students everywhere were struggling with complex assignments and exam pressure, while talented peers and experts had the knowledge to help. The problem was a lack of a trusted connection.</p>
+                <p class="mt-4 text-gray-600">We built StudyScribe to be that bridge—a platform founded on trust, quality, and a student-first approach to connect learners with the expert guidance they need, exactly when they need it.</p>
+            </div>
+            <div class="bg-secondary p-8 rounded-lg">
+                <img src="https://i.imgur.com/gK9iB9H.png" alt="Team working on laptops illustration" class="w-full h-auto"/>
+            </div>
+        </section>
+
+        <!-- 3. Mission & Vision -->
+        <section class="reveal mt-16 grid md:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-lg shadow-sm border flex items-center gap-6">
+                <i data-lucide="target" class="w-12 h-12 text-primary flex-shrink-0"></i>
+                <div>
+                    <h3 class="text-2xl font-bold">Our Mission</h3>
+                    <p class="mt-2 text-gray-600">To provide every student with accessible, reliable, and high-quality academic support to help them achieve their learning goals.</p>
+                </div>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-sm border flex items-center gap-6">
+                 <i data-lucide="globe" class="w-12 h-12 text-primary flex-shrink-0"></i>
+                <div>
+                    <h3 class="text-2xl font-bold">Our Vision</h3>
+                    <p class="mt-2 text-gray-600">To build the world's largest and most trusted student-support ecosystem, fostering a global community of learning and growth.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Core Values -->
+        <section class="reveal mt-16 text-center">
+            <h2 class="text-3xl font-bold">Our Core Values</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mt-8">
+                <div class="bg-white p-4 rounded-lg shadow-sm border"><i data-lucide="shield-check" class="w-8 h-8 text-primary mx-auto"></i><p class="mt-2 font-semibold">Trust</p></div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border"><i data-lucide="gem" class="w-8 h-8 text-primary mx-auto"></i><p class="mt-2 font-semibold">Quality</p></div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border"><i data-lucide="receipt" class="w-8 h-8 text-primary mx-auto"></i><p class="mt-2 font-semibold">Affordability</p></div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border"><i data-lucide="trending-up" class="w-8 h-8 text-primary mx-auto"></i><p class="mt-2 font-semibold">Growth</p></div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border"><i data-lucide="lightbulb" class="w-8 h-8 text-primary mx-auto"></i><p class="mt-2 font-semibold">Innovation</p></div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border"><i data-lucide="heart" class="w-8 h-8 text-primary mx-auto"></i><p class="mt-2 font-semibold">Student-First</p></div>
+            </div>
+        </section>
+        
+        <!-- 5. Team Section -->
+        <section class="reveal mt-16 text-center">
+             <h2 class="text-3xl font-bold">Meet the Team</h2>
+             <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border">
+                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" alt="Dev Singh" class="w-24 h-24 rounded-full mx-auto"/>
+                    <h3 class="mt-4 font-bold text-lg">Dev Singh</h3>
+                    <p class="text-sm text-primary font-semibold">Founder & CEO</p>
+                    <p class="text-sm text-gray-500 mt-2">An MCA student passionate about leveraging technology to solve real-world problems for students.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border">
+                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" alt="Priya Sharma" class="w-24 h-24 rounded-full mx-auto"/>
+                    <h3 class="mt-4 font-bold text-lg">Priya Sharma</h3>
+                    <p class="text-sm text-primary font-semibold">Head of Academics</p>
+                    <p class="text-sm text-gray-500 mt-2">A top-rated writer and mentor, ensuring the quality of our academic support stays top-notch.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border">
+                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Rohan" alt="Rohan Das" class="w-24 h-24 rounded-full mx-auto"/>
+                    <h3 class="mt-4 font-bold text-lg">Rohan Das</h3>
+                    <p class="text-sm text-primary font-semibold">Lead Developer</p>
+                    <p class="text-sm text-gray-500 mt-2">The architect behind our platform, dedicated to creating a smooth and secure user experience.</p>
+                </div>
+             </div>
+        </section>
+
+        <!-- 7. CTA -->
+        <section class="reveal mt-16 bg-secondary p-8 rounded-lg text-center">
+            <h2 class="text-3xl font-bold">Join the StudyScribe Community Today!</h2>
+            <p class="mt-2 text-gray-600">Ready to excel in your studies or earn from your expertise?</p>
+            <button class="mt-6 bg-primary text-white font-semibold py-3 px-8 rounded-full btn-anim">Get Started</button>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 border-t py-8 px-4 text-center text-sm text-gray-500">
+        <p>&copy; 2025 StudyScribe. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            document.getElementById('profile-dropdown-btn')?.addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('profile-dropdown-menu').classList.toggle('hidden'); });
+            document.addEventListener('click', () => document.getElementById('profile-dropdown-menu')?.classList.add('hidden'));
+
+            const revealElements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+            }, { threshold: 0.1 });
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>

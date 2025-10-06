@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Student Profile - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
+        .form-input {
+            margin-top: 0.25rem; display: block; width: 100%; padding: 0.75rem;
+            border: 1px solid #D1D5DB; border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 0.2s ease-in-out;
+        }
+        .form-input:focus, .form-input:focus-within {
+            outline: none; border-color: #6366F1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        #toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.75rem; }
+        .toast { display: flex; align-items: center; padding: 1rem 1.25rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); animation: toast-in 0.3s ease-out forwards; max-width: 350px; }
+        .toast.hiding { animation: toast-out 0.3s ease-in forwards; }
+        .toast-success { background-color: #F0FFF4; border: 1px solid #C6F6D5; color: #2F855A; }
+        .toast-error { background-color: #FFF5F5; border: 1px solid #FEB2B2; color: #C53030; }
+        @keyframes toast-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toast-out { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        .form-section-divider { border-top: 1px solid #e5e7eb; margin-top: 1.5rem; padding-top: 1.5rem; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div id="toast-container"></div>
+    <div id="setup-container" class="w-full max-w-3xl mx-auto hidden">
+        <div class="bg-white rounded-xl shadow-lg p-8 md:p-12">
+            <div class="text-center mb-8">
+                <a href="#" class="inline-flex items-center gap-3">
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-md font-bold">SS</span>
+                </a>
+                <h1 class="text-3xl font-bold text-gray-800 mt-4">Complete Your Student Profile</h1>
+                <p class="text-gray-500 mt-2">Just a few more details to help us find the perfect writer for you.</p>
+            </div>
+            
+            <form id="profile-setup-form" class="space-y-6" novalidate>
+                
+                <!-- Personal & Academic Information -->
+                <div class="form-section-divider">
+                     <h3 class="text-lg font-semibold text-gray-900">Personal & Academic Information</h3>
+                </div>
+                 <div class="flex flex-col items-center space-y-4">
+                    <div class="relative w-28 h-28">
+                        <img id="profile-image-preview" src="https://api.dicebear.com/9.x/initials/svg?seed=Student" alt="Profile Picture" class="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow">
+                        <label for="profile-image-upload" class="absolute bottom-0 right-0 bg-purple-600 text-white rounded-full p-2 cursor-pointer hover:bg-purple-700 transition">
+                            <i data-lucide="camera" class="w-4 h-4"></i>
+                            <input type="file" id="profile-image-upload" class="hidden" accept="image/*">
+                        </label>
+                    </div>
+                     <p class="text-sm text-gray-500">(Optional) Upload a profile picture.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label for="fullname" class="text-sm font-medium text-gray-700">Full Name</label><input type="text" id="fullname" class="form-input" required></div>
+                    <div><label for="email" class="text-sm font-medium text-gray-700">Email</label><input type="email" id="email" class="form-input bg-gray-100 cursor-not-allowed" disabled></div>
+                    <div><label for="phone" class="text-sm font-medium text-gray-700">Phone Number</label><input type="tel" id="phone" class="form-input" placeholder="+91 9876543210" required></div>
+                    <div><label for="standard-class" class="text-sm font-medium text-gray-700">Standard / Class</label><input type="text" id="standard-class" placeholder="e.g., First Year MCA" class="form-input" required></div>
+                    <div><label for="college-name" class="text-sm font-medium text-gray-700">College Name</label><input type="text" id="college-name" class="form-input" required></div>
+                     <div><label for="city" class="text-sm font-medium text-gray-700">City</label><input type="text" id="city" class="form-input" required></div>
+                </div>
+                <div><label for="college-address" class="text-sm font-medium text-gray-700">College Address</label><textarea id="college-address" rows="3" class="form-input" required></textarea></div>
+                <div><label for="state" class="text-sm font-medium text-gray-700">State</label><select id="state" class="form-input" required></select></div>
+
+                <!-- Project Needs -->
+                <div class="form-section-divider">
+                     <h3 class="text-lg font-semibold text-gray-900">Project Needs</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div><label for="work-type" class="text-sm font-medium text-gray-700">Type of Work</label><select id="work-type" class="form-input" required><option>Assignment</option><option>Project</option><option>Notes</option><option>Research</option></select></div>
+                    <div><label for="language" class="text-sm font-medium text-gray-700">Preferred Language</label><select id="language" class="form-input" required><option>English</option><option>Hindi</option><option>Other</option></select></div>
+                    <div><label for="budget" class="text-sm font-medium text-gray-700">Budget Range (in INR)</label><input type="text" id="budget" class="form-input" placeholder="e.g., 500 - 1000" required></div>
+                </div>
+                 <div>
+                    <label class="text-sm font-medium text-gray-700">Upload Reference Files (Optional)</label>
+                    <div class="mt-2">
+                        <label for="reference-files" class="inline-block cursor-pointer bg-white border border-gray-300 rounded-md shadow-sm px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            <span>Select Files</span>
+                            <input id="reference-files" type="file" class="sr-only" multiple>
+                        </label>
+                        <p id="reference-filenames" class="text-xs text-gray-500 mt-2">No files selected.</p>
+                    </div>
+                </div>
+                
+                <div class="pt-6">
+                    <button type="submit" id="save-btn" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-full shadow-sm text-base font-medium text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 transition">
+                        Save & Find Writers
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+     <div id="loading-state" class="text-center py-20">
+        <h1 class="text-2xl font-bold text-gray-700">Authenticating...</h1>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
+      authDomain: "campusreach-c57e0.firebaseapp.com",
+      projectId: "campusreach-c57e0",
+      storageBucket: "gs://campusreach-c57e0.firebasestorage.app",
+      messagingSenderId: "294813850577",
+      appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
+    };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        let currentUser = null;
+
+        const states = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
+        const stateDropdown = document.getElementById('state');
+        states.forEach(state => {
+            const option = document.createElement('option');
+            option.value = state;
+            option.textContent = state;
+            stateDropdown.appendChild(option);
+        });
+
+        const showToast = (message, type = 'error') => {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type === 'success' ? 'success' : 'error'}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                toast.addEventListener('animationend', () => toast.remove());
+            }, 3000);
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userDocRef = doc(db, "users", user.uid);
+                const docSnap = await getDoc(userDocRef);
+
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    if (userData.role !== 'student') {
+                        window.location.href = "/html/writer-setup.html"; 
+                        return;
+                    }
+                    document.getElementById('email').value = user.email;
+                    document.getElementById('fullname').value = userData.fullname || user.displayName || '';
+                    if (userData.profileImage) {
+                         document.getElementById('profile-image-preview').src = userData.profileImage;
+                    }
+                }
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('setup-container').classList.remove('hidden');
+                lucide.createIcons();
+            } else {
+                window.location.href = "/html/login.html";
+            }
+        });
+        
+        document.getElementById('profile-image-upload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('profile-image-preview').src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('reference-files').addEventListener('change', (e) => {
+            const files = e.target.files;
+            const filenamesEl = document.getElementById('reference-filenames');
+            if (files.length > 0) {
+                 filenamesEl.textContent = `${files.length} file(s) selected.`;
+            } else {
+                 filenamesEl.textContent = 'No files selected.';
+            }
+        });
+
+        document.getElementById('profile-setup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+            
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving...';
+
+            try {
+                const userDocRef = doc(db, "users", currentUser.uid);
+                const updatedData = {
+                    fullname: document.getElementById('fullname').value,
+                    phone: document.getElementById('phone').value,
+                    collegeName: document.getElementById('college-name').value,
+                    collegeAddress: document.getElementById('college-address').value,
+                    city: document.getElementById('city').value,
+                    state: document.getElementById('state').value,
+                    standardClass: document.getElementById('standard-class').value,
+                    projectDetails: {
+                        workType: document.getElementById('work-type').value,
+                        language: document.getElementById('language').value,
+                        budget: document.getElementById('budget').value,
+                    },
+                    profileSetupComplete: true 
+                };
+                
+                // --- File Upload Logic ---
+                const profilePicFile = document.getElementById('profile-image-upload').files[0];
+                if (profilePicFile) {
+                    const storageRef = ref(storage, `profilePictures/${currentUser.uid}/${profilePicFile.name}`);
+                    await uploadBytes(storageRef, profilePicFile);
+                    updatedData.profileImage = await getDownloadURL(storageRef);
+                }
+
+                const referenceFiles = document.getElementById('reference-files').files;
+                if (referenceFiles.length > 0) {
+                    updatedData.referenceFileUrls = [];
+                    for(const file of referenceFiles) {
+                        const storageRef = ref(storage, `studentDocs/${currentUser.uid}/references/${file.name}`);
+                        await uploadBytes(storageRef, file);
+                        const url = await getDownloadURL(storageRef);
+                        updatedData.referenceFileUrls.push(url);
+                    }
+                }
+                
+                await setDoc(userDocRef, updatedData, { merge: true });
+                showToast('Profile saved successfully!', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = '/html/profile-preview(student).html';
+                }, 1500);
+
+            } catch(error) {
+                console.error("Error saving profile:", error);
+                showToast('Failed to save profile. Please try again.', 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save & Find Writers';
+            }
+        });
+    </script>
+</body>
+</html>
+

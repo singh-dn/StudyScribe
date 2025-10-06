@@ -58,3 +58,44 @@
     }
     loadComponent("header", "header.html");
     loadComponent("footer", "footer.html");
+
+const form = document.getElementById("newsletter-form");
+
+  function showPopup(title, message, success = true) {
+    const modal = document.getElementById("popup-modal");
+    document.getElementById("popup-title").textContent = title;
+    document.getElementById("popup-message").textContent = message;
+
+    // Change color for success/error
+    document.getElementById("popup-title").className = success
+      ? "text-lg font-bold mb-2 text-green-600"
+      : "text-lg font-bold mb-2 text-red-600";
+
+    modal.classList.remove("hidden");
+
+    // Auto hide after 4 seconds
+    setTimeout(() => modal.classList.add("hidden"), 2000);
+  }
+
+  function closePopup() {
+    document.getElementById("popup-modal").classList.add("hidden");
+  }
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  const email = document.getElementById("EMAIL").value.trim();
+
+  // Show popup immediately
+  showPopup("✅ Subscribed!", "Thank you! You have successfully subscribed.");
+  form.reset();
+
+  // Submit to Brevo in the background
+  const formData = new FormData(form);
+  fetch(form.action, {
+    method: "POST",
+    body: formData,
+    mode: "no-cors"
+  }).catch(err => {
+    // We ignore errors here because popup is already shown
+    console.warn("Brevo submission failed (ignored)", err);
+  });
+});

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Marketplace - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { --primary: 262 83% 61%; }
+        body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; }
+        .text-primary { color: hsl(var(--primary)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary-foreground { color: white; }
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .filter-btn.active { background-color: hsl(var(--primary)); color: white; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <!-- Header -->
+    <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+        <!-- Re-used header content here -->
+    </header>
+
+    <main class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <section class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Explore the Marketplace</h1>
+            <p class="mt-2 text-lg text-gray-500">Find notes, question papers, and career roadmaps from top students and writers.</p>
+        </section>
+
+        <!-- Filters -->
+        <section class="mb-8">
+            <div id="content-filters" class="flex flex-wrap items-center justify-center gap-2 bg-white p-2 rounded-full shadow-sm border">
+                <button class="filter-btn active px-4 py-2 text-sm font-semibold rounded-full" data-filter="all">All</button>
+                <button class="filter-btn px-4 py-2 text-sm font-semibold rounded-full" data-filter="notes">Notes</button>
+                <button class="filter-btn px-4 py-2 text-sm font-semibold rounded-full" data-filter="papers">Question Papers</button>
+                <button class="filter-btn px-4 py-2 text-sm font-semibold rounded-full" data-filter="roadmaps">Roadmaps</button>
+            </div>
+        </section>
+
+        <!-- Content Grid -->
+        <section id="content-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Card - Note -->
+            <div class="content-card" data-type="notes">
+                <div class="bg-white rounded-lg shadow-sm border overflow-hidden h-full flex flex-col">
+                   <div class="p-4"><h3 class="font-bold truncate">Advanced Algorithms Notes</h3><p class="text-xs text-gray-500">Computer Science</p></div>
+                   <div class="p-4 flex-1"><p class="text-sm text-gray-600">Comprehensive notes covering all major sorting, searching, and graph algorithms.</p></div>
+                   <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-primary">₹150</span><button class="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm">View</button></div>
+                </div>
+            </div>
+            <!-- Card - Paper -->
+            <div class="content-card" data-type="papers">
+                 <div class="bg-white rounded-lg shadow-sm border overflow-hidden h-full flex flex-col">
+                   <div class="p-4"><h3 class="font-bold truncate">GATE CSE 2023 Paper</h3><p class="text-xs text-gray-500">Competitive Exam</p></div>
+                   <div class="p-4 flex-1"><p class="text-sm text-gray-600">Complete solved question paper for the GATE 2023 Computer Science exam.</p></div>
+                   <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-green-600">Free</span><button class="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm">Download</button></div>
+                </div>
+            </div>
+            <!-- Card - Roadmap -->
+            <div class="content-card" data-type="roadmaps">
+                 <div class="bg-white rounded-lg shadow-sm border overflow-hidden h-full flex flex-col">
+                   <div class="p-4"><h3 class="font-bold truncate">Web Development Roadmap</h3><p class="text-xs text-gray-500">Career Guidance</p></div>
+                   <div class="p-4 flex-1"><p class="text-sm text-gray-600">A 6-month step-by-step guide to becoming a full-stack web developer from scratch.</p></div>
+                   <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-sm font-semibold text-gray-500">Beginner</span><button class="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm">Explore</button></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Re-adding header
+            const header = document.querySelector('header');
+            header.innerHTML = `<div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"><div class="flex items-center justify-between h-16 -mb-px"><!-- Header content from other pages --></div></div>`;
+
+            // Filter logic
+            const filterContainer = document.getElementById('content-filters');
+            const contentCards = document.querySelectorAll('.content-card');
+
+            filterContainer.addEventListener('click', (e) => {
+                const button = e.target.closest('.filter-btn');
+                if (!button) return;
+
+                filterContainer.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                const filterType = button.dataset.filter;
+
+                contentCards.forEach(card => {
+                    if (filterType === 'all' || card.dataset.type === filterType) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

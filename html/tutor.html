@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find a Tutor - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: 262 83% 61%;
+            --secondary: 210 40% 97%;
+            --border: 214.3 31.8% 91.4%;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; }
+        .text-primary { color: hsl(var(--primary)); }
+        .bg-primary { background-color: hsl(var(--primary)); }
+        .text-primary-foreground { color: white; }
+        .ring-primary { --tw-ring-color: hsl(var(--primary)); }
+        .border-primary { border-color: hsl(var(--primary)); }
+        .accent-primary { accent-color: hsl(var(--primary)); }
+        .bg-secondary { background-color: hsl(var(--secondary)); }
+
+        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .category-btn.active {
+            background-color: hsl(var(--primary));
+            color: white;
+            font-weight: 600;
+        }
+        .modal-content { animation: slide-up 0.3s ease-out; }
+        @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- =========== Top Navigation (Reused) =========== -->
+    <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 -mb-px">
+                <div class="flex items-center space-x-4">
+                    <a href="#" class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span><span class="font-extrabold tracking-tight text-xl hidden sm:inline">StudyScribe</span></a>
+                </div>
+                <div class="flex items-center space-x-3">
+                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="bell" class="w-5 h-5 text-gray-500"></i></button>
+                    <div class="relative" id="profile-dropdown-container">
+                        <button id="profile-dropdown-btn" class="flex items-center space-x-2">
+                            <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" alt="User avatar">
+                            <span class="hidden md:inline text-sm font-medium">Dev Singh</span><i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                        </button>
+                        <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a><a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <section class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">Find Your Expert Tutor</h1>
+            <p class="mt-2 text-lg text-gray-500">Search our network of verified experts for live lectures and 1-on-1 guidance.</p>
+            <div class="mt-6 max-w-2xl mx-auto">
+                 <div class="relative">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                    <input type="search" placeholder="Search by course (e.g., Java Programming, React)..." class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-primary focus:border-primary">
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Filters Sidebar -->
+            <aside class="w-full lg:w-1/4 xl:w-1/5">
+                <div class="sticky top-24 bg-white p-6 rounded-lg shadow-sm border">
+                    <h2 class="text-lg font-bold mb-4">Filters</h2>
+                    <div id="filters" class="space-y-6">
+                        <div>
+                            <h3 class="font-semibold mb-2 text-sm">Courses</h3>
+                            <div id="category-filters" class="space-y-1">
+                                <button class="category-btn active w-full text-left text-sm p-2 rounded-md" data-category="all">All Courses</button>
+                                <button class="category-btn w-full text-left text-sm p-2 rounded-md hover:bg-gray-100" data-category="web-dev">Web Development</button>
+                                <button class="category-btn w-full text-left text-sm p-2 rounded-md hover:bg-gray-100" data-category="data-science">Data Science</button>
+                                <button class="category-btn w-full text-left text-sm p-2 rounded-md hover:bg-gray-100" data-category="exam-prep">Competitive Exams</button>
+                                <button class="category-btn w-full text-left text-sm p-2 rounded-md hover:bg-gray-100" data-category="writing">Academic Writing</button>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-2 text-sm">Session Type</h3>
+                            <div class="space-y-1 text-sm">
+                                <label class="flex items-center"><input type="radio" name="price" value="all" class="h-4 w-4 accent-primary mr-2" checked> Any</label>
+                                <label class="flex items-center"><input type="radio" name="price" value="paid" class="h-4 w-4 accent-primary mr-2"> Paid</label>
+                                <label class="flex items-center"><input type="radio" name="price" value="free" class="h-4 w-4 accent-primary mr-2"> Free Sessions</label>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-2 text-sm">Role</h3>
+                             <div class="space-y-1 text-sm">
+                                <label class="flex items-center"><input type="checkbox" value="tutor" class="h-4 w-4 rounded border-gray-300 accent-primary mr-2"> Tutor</label>
+                                <label class="flex items-center"><input type="checkbox" value="mentor" class="h-4 w-4 rounded border-gray-300 accent-primary mr-2"> Mentor</label>
+                            </div>
+                        </div>
+                         <div>
+                            <h3 class="font-semibold mb-2 text-sm">Availability</h3>
+                            <label class="flex items-center text-sm"><input type="checkbox" name="availability" value="online" class="h-4 w-4 rounded border-gray-300 accent-primary mr-2">Online Now</label>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Tutors List -->
+            <main id="tutors-grid" class="flex-1 space-y-6">
+                <!-- Tutor Card 1 -->
+                <div class="tutor-card bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col md:flex-row" data-category="web-dev data-science" data-price="paid" data-role="tutor mentor">
+                    <div class="p-6 md:w-1/2 md:border-r">
+                         <div class="flex items-center gap-4">
+                            <div class="relative"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" class="w-16 h-16 rounded-full" alt="Priya Sharma"/><span class="absolute bottom-0 right-0 block h-4 w-4 rounded-full bg-green-400 border-2 border-white"></span></div>
+                            <div><h3 class="text-lg font-bold">Priya Sharma</h3><div class="flex items-center gap-1 text-xs mt-1 text-amber-500"><i data-lucide="star" class="w-4 h-4 fill-current"></i> 4.9 (152)</div></div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            <span class="text-xs font-semibold bg-green-100 text-green-800 px-2 py-0.5 rounded-full">Top Rated</span>
+                            <span class="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Degree Verified</span>
+                             <span class="text-xs font-semibold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">Mentor</span>
+                        </div>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <p class="text-sm text-gray-600">Expert in Full-Stack Development and Data Science. Offers courses on React, Node.js, Python, and Machine Learning. Also provides career mentorship.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50/50 flex flex-col items-center justify-center space-y-2 md:border-l">
+                        <span class="text-lg font-bold text-primary">₹500/hr</span>
+                        <button class="book-session-btn w-full bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm btn-anim">Book Session</button>
+                    </div>
+                </div>
+                <!-- Tutor Card 2 -->
+                 <div class="tutor-card bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col md:flex-row" data-category="writing exam-prep" data-price="paid" data-role="tutor">
+                     <div class="p-6 md:w-1/2 md:border-r">
+                         <div class="flex items-center gap-4">
+                             <div class="relative"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Anjali" class="w-16 h-16 rounded-full" alt="Anjali Mehta"/><span class="absolute bottom-0 right-0 block h-4 w-4 rounded-full bg-gray-400 border-2 border-white"></span></div>
+                            <div><h3 class="text-lg font-bold">Anjali Mehta</h3><div class="flex items-center gap-1 text-xs mt-1 text-amber-500"><i data-lucide="star" class="w-4 h-4 fill-current"></i> 4.8 (110)</div></div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2"><span class="text-xs font-semibold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">ID Verified</span></div>
+                    </div>
+                     <div class="p-6 flex-1">
+                         <p class="text-sm text-gray-600">PhD with expertise in academic writing and IELTS preparation. Available to host group lectures on thesis writing and exam strategies.</p>
+                     </div>
+                     <div class="p-6 bg-gray-50/50 flex flex-col items-center justify-center space-y-2 md:border-l">
+                         <span class="text-lg font-bold text-primary">₹650/hr</span>
+                         <button class="schedule-lecture-btn w-full bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm btn-anim">Schedule Lecture</button>
+                     </div>
+                </div>
+                <!-- Tutor Card 3 (Free Mentor) -->
+                 <div class="tutor-card bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col md:flex-row" data-category="web-dev" data-price="free" data-role="mentor">
+                     <div class="p-6 md:w-1/2 md:border-r">
+                         <div class="flex items-center gap-4">
+                             <div class="relative"><img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Rohan" class="w-16 h-16 rounded-full" alt="Rohan Das"/><span class="absolute bottom-0 right-0 block h-4 w-4 rounded-full bg-green-400 border-2 border-white"></span></div>
+                            <div><h3 class="text-lg font-bold">Rohan Das</h3><div class="flex items-center gap-1 text-xs mt-1 text-amber-500"><i data-lucide="star" class="w-4 h-4 fill-current"></i> 4.7 (95)</div></div>
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-2"><span class="text-xs font-semibold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">Mentor</span></div>
+                    </div>
+                     <div class="p-6 flex-1">
+                         <p class="text-sm text-gray-600">Final year B.Tech student offering free mentorship sessions for coding interviews, resume reviews, and web development project guidance.</p>
+                     </div>
+                     <div class="p-6 bg-gray-50/50 flex flex-col items-center justify-center space-y-2 md:border-l">
+                         <span class="text-lg font-bold text-green-600">Free Mentorship</span>
+                         <button class="book-session-btn w-full bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm btn-anim">Book Session</button>
+                     </div>
+                </div>
+            </main>
+        </div>
+    </main>
+    
+    <!-- Modal Backdrop -->
+    <div id="modal-backdrop" class="hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300"></div>
+
+    <!-- Schedule Lecture Modal -->
+    <div id="schedule-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Content will be injected by JS -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            const profileDropdownBtn = document.getElementById('profile-dropdown-btn');
+            const profileDropdownMenu = document.getElementById('profile-dropdown-menu');
+            profileDropdownBtn.addEventListener('click', (e) => { e.stopPropagation(); profileDropdownMenu.classList.toggle('hidden'); });
+            document.addEventListener('click', () => profileDropdownMenu.classList.add('hidden'));
+
+            // --- Advanced Filter Logic ---
+            const filters = document.getElementById('filters');
+            const tutorCards = document.querySelectorAll('.tutor-card');
+
+            const applyFilters = () => {
+                const activeCategory = document.querySelector('#category-filters .category-btn.active').dataset.category;
+                const priceFilter = document.querySelector('input[name="price"]:checked').value;
+                const roleFilters = Array.from(document.querySelectorAll('input[type="checkbox"][value="tutor"], input[type="checkbox"][value="mentor"]')).filter(cb => cb.checked).map(cb => cb.value);
+
+                tutorCards.forEach(card => {
+                    const cardCategories = card.dataset.category.split(' ');
+                    const cardPrice = card.dataset.price;
+                    const cardRoles = card.dataset.role.split(' ');
+                    const categoryMatch = activeCategory === 'all' || cardCategories.includes(activeCategory);
+                    const priceMatch = priceFilter === 'all' || cardPrice === priceFilter;
+                    const roleMatch = roleFilters.length === 0 || roleFilters.some(role => cardRoles.includes(role));
+                    
+                    if (categoryMatch && priceMatch && roleMatch) {
+                        card.style.display = 'flex'; // Use flex for list view
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            };
+
+            filters.addEventListener('change', applyFilters);
+            filters.addEventListener('click', (e) => {
+                 const button = e.target.closest('.category-btn');
+                 if(button) {
+                     document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                     button.classList.add('active');
+                     applyFilters();
+                 }
+            });
+
+            // --- Schedule Lecture Modal Logic ---
+            const scheduleModal = document.getElementById('schedule-modal');
+            const backdrop = document.getElementById('modal-backdrop');
+            const tutorsGrid = document.getElementById('tutors-grid');
+
+            const openScheduleModal = (tutorName) => {
+                scheduleModal.innerHTML = `
+                    <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-md">
+                        <div class="p-6 border-b flex justify-between items-center">
+                            <h2 class="text-2xl font-bold">Schedule Lecture with ${tutorName}</h2>
+                            <button class="close-modal p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-6 h-6"></i></button>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div><label for="lecture-date" class="text-sm font-medium">Date</label><input type="date" id="lecture-date" class="mt-1 w-full border-gray-300 rounded-md focus:ring-primary focus:border-primary"></div>
+                            <div><label for="lecture-time" class="text-sm font-medium">Time</label><input type="time" id="lecture-time" class="mt-1 w-full border-gray-300 rounded-md focus:ring-primary focus:border-primary"></div>
+                            <div><label for="lecture-message" class="text-sm font-medium">Message (Optional)</label><textarea id="lecture-message" rows="3" placeholder="Any specific topics you want to cover?" class="mt-1 w-full border-gray-300 rounded-md focus:ring-primary focus:border-primary"></textarea></div>
+                        </div>
+                        <div class="p-4 border-t bg-gray-50 flex justify-end">
+                            <button class="bg-primary text-white font-semibold py-2 px-5 rounded-full btn-anim">Confirm Schedule</button>
+                        </div>
+                    </div>`;
+                lucide.createIcons();
+                scheduleModal.classList.remove('hidden');
+                backdrop.classList.remove('hidden');
+                scheduleModal.querySelector('.close-modal').addEventListener('click', closeScheduleModal);
+            };
+
+            const closeScheduleModal = () => {
+                scheduleModal.classList.add('hidden');
+                backdrop.classList.add('hidden');
+            };
+
+            tutorsGrid.addEventListener('click', (e) => {
+                const scheduleBtn = e.target.closest('.schedule-lecture-btn');
+                if (scheduleBtn) {
+                    const tutorCard = scheduleBtn.closest('.tutor-card');
+                    const tutorName = tutorCard.querySelector('h3').textContent;
+                    openScheduleModal(tutorName);
+                }
+            });
+            backdrop.addEventListener('click', closeScheduleModal);
+        });
+    </script>
+</body>
+</html>
+

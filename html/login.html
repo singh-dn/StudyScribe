@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - StudyScribe</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root { --primary: 262 83% 61%; --muted-foreground: 220 15% 40%; }
@@ -18,26 +16,37 @@
         .aurora-bg::after { width: 500px; height: 500px; background-color: #A5F3FC; bottom: -200px; right: -250px; animation: pulse-aurora-2 15s infinite alternate; animation-delay: 3s; }
         @keyframes pulse-aurora-1 { from { transform: scale(0.9) translate(-20px, 30px); } to { transform: scale(1.1) translate(20px, -30px); } }
         @keyframes pulse-aurora-2 { from { transform: scale(0.9) translate(20px, -30px); } to { transform: scale(1.1) translate(-20px, 30px); } }
-        .btn-primary { background-color: hsl(var(--primary)); }
+        
+        /* Custom Toast Notification Styles */
+        #toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.75rem; }
+        .toast { display: flex; align-items: center; padding: 1rem 1.25rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); animation: toast-in 0.3s ease-out forwards; max-width: 350px; }
+        .toast.hiding { animation: toast-out 0.3s ease-in forwards; }
+        .toast-success { background-color: #F0FFF4; border: 1px solid #C6F6D5; color: #2F855A; }
+        .toast-error { background-color: #FFF5F5; border: 1px solid #FEB2B2; color: #C53030; }
+        .toast-info { background-color: #EBF8FF; border: 1px solid #90CDF4; color: #2C5282; }
+        @keyframes toast-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toast-out { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
     </style>
 </head>
+
 <body class="flex items-center justify-center min-h-screen">
+    <div id="toast-container"></div>
     <div class="aurora-bg"></div>
     <div class="w-full max-w-md p-8 space-y-6">
         <div class="text-center">
-            <a href="./index.html" class="inline-flex items-center gap-3">
-              <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-md">SS</span>
-              <span class="font-extrabold tracking-tight text-2xl">StudyScribe</span>
+            <a href="Home.html" class="inline-flex items-center gap-3">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-md">SS</span>
+                <span class="font-extrabold tracking-tight text-2xl">StudyScribe</span>
             </a>
             <h1 class="text-3xl font-bold mt-6">Welcome Back!</h1>
             <p class="text-gray-500">Please enter your details to sign in.</p>
         </div>
 
         <div class="bg-white/70 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg p-8">
-            <form class="space-y-6">
+            <form id="loginForm" class="space-y-6">
                 <div>
-                    <label for="email" class="text-sm font-medium text-gray-700">Email / Username</label>
-                    <input id="email" name="email" type="email" autocomplete="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    <label for="email" class="text-sm font-medium text-gray-700">Email</label>
+                    <input id="email" name="email" type="email" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                 </div>
 
                 <div class="relative">
@@ -45,14 +54,17 @@
                         <label for="password" class="text-sm font-medium text-gray-700">Password</label>
                         <a href="./forgot-password.html" class="text-sm text-purple-600 hover:underline">Forgot Password?</a>
                     </div>
-                    <input id="password" name="password" type="password" autocomplete="current-password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                    <input id="password" name="password" type="password" required class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500">
                     <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 top-6 pr-3 flex items-center text-gray-400">
                         <i id="eye-icon" data-lucide="eye" class="h-5 w-5"></i>
                         <i id="eye-off-icon" data-lucide="eye-off" class="h-5 w-5 hidden"></i>
                     </button>
                 </div>
-                
-                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all transform hover:-translate-y-1">Login</button>
+
+                <button type="submit" id="login-btn" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 transition-all transform hover:-translate-y-1">
+                    <span class="btn-text">Login</span>
+                    <svg class="animate-spin h-5 w-5 text-white hidden btn-loader" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </button>
 
                 <div class="relative flex py-2 items-center">
                     <div class="flex-grow border-t border-gray-300"></div>
@@ -60,30 +72,169 @@
                     <div class="flex-grow border-t border-gray-300"></div>
                 </div>
 
-                <button type="button" class="w-full flex items-center justify-center py-2.5 px-4 border border-gray-300 rounded-full shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all transform hover:-translate-y-1">
+                <button id="google-btn" type="button" class="w-full flex items-center justify-center py-2.5 px-4 border border-gray-300 rounded-full shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all transform hover:-translate-y-1">
                     <svg class="w-5 h-5 mr-2" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="m6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C16.318 4 9.656 8.337 6.306 14.691z"></path><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.222 0-9.519-3.317-11.28-7.944l-6.522 5.025A20.02 20.02 0 0 0 24 44z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.574l6.19 5.238C42.028 35.14 44 30.023 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
-                    Continue with Google
+                    <span class="btn-text">Continue with Google</span>
+                     <svg class="animate-spin h-5 w-5 text-gray-700 hidden btn-loader ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                 </button>
 
                 <p class="text-center text-sm text-gray-600">
-                    Don't have an account? <a href="./signup.html" class="font-medium text-purple-600 hover:underline">Sign Up</a>
+                    Don't have an account? <a href="register.html" class="font-medium text-purple-600 hover:underline">Sign Up</a>
                 </p>
             </form>
         </div>
     </div>
-    <script>
-        lucide.createIcons();
-        const togglePassword = document.getElementById('toggle-password');
-        const passwordInput = document.getElementById('password');
-        const eyeIcon = document.getElementById('eye-icon');
-        const eyeOffIcon = document.getElementById('eye-off-icon');
 
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            eyeIcon.classList.toggle('hidden');
-            eyeOffIcon.classList.toggle('hidden');
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        // CORRECTED: Import Firestore instead of Realtime Database
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
+            authDomain: "campusreach-c57e0.firebaseapp.com",
+            // databaseURL is for Realtime DB, not needed for Firestore
+            projectId: "campusreach-c57e0",
+            storageBucket: "campusreach-c57e0.firebasestorage.app",
+            messagingSenderId: "294813850577",
+            appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        // CORRECTED: Initialize Firestore
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            const form = document.getElementById("loginForm");
+            const loginBtn = document.getElementById('login-btn');
+            const googleBtn = document.getElementById('google-btn');
+
+            // --- Toast Notification Logic ---
+            const toastContainer = document.getElementById('toast-container');
+            const showToast = (message, type = 'error', duration = 3000) => {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                toastContainer.appendChild(toast);
+                setTimeout(() => {
+                    toast.classList.add('hiding');
+                    toast.addEventListener('animationend', () => toast.remove());
+                }, duration);
+            };
+            
+            // --- UI Helpers ---
+            const setButtonLoading = (btn, isLoading) => {
+                const text = btn.querySelector('.btn-text');
+                const loader = btn.querySelector('.btn-loader');
+                btn.disabled = isLoading;
+                if (isLoading) {
+                    text.classList.add('hidden');
+                    if (loader) loader.classList.remove('hidden');
+                } else {
+                    text.classList.remove('hidden');
+                    if (loader) loader.classList.add('hidden');
+                }
+            };
+            
+            // --- Toggle Password Visibility ---
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            const eyeOffIcon = document.getElementById('eye-off-icon');
+
+            togglePassword.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                eyeIcon.classList.toggle('hidden');
+                eyeOffIcon.classList.toggle('hidden');
+            });
+
+            // --- Main Redirect Logic ---
+            async function redirectUser(uid, displayName = "User") {
+                // CORRECTED: Use Firestore getDoc
+                const docRef = doc(db, "users", uid);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    const role = (userData.role || "Student").toLowerCase();
+                    const name = userData.fullname || displayName; // Use fullname from Firestore
+
+                    showToast(`Welcome, ${name}!`, 'success', 2000);
+
+                    setTimeout(() => {
+                        if (role === "writer") {
+                            // CORRECTED: Use relative paths for robustness
+                            window.location.href = "/html/profile-setup.html";
+                        } else {
+                            window.location.href = "/html/profile-setup(student).html";
+                        }
+                    }, 1500);
+                } else {
+                    showToast("User data not found! Please register again.", 'error');
+                }
+            }
+
+            // --- Email + Password Login ---
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value.trim();
+
+                if (!email || !password) {
+                    showToast("Please fill in all fields!", 'error');
+                    return;
+                }
+
+                setButtonLoading(loginBtn, true);
+                try {
+                    const userCred = await signInWithEmailAndPassword(auth, email, password);
+                    await redirectUser(userCred.user.uid);
+                } catch (error) {
+                    const message = error.code === 'auth/invalid-credential' ? 'Invalid email or password.' : 'Login failed. Please try again.';
+                    showToast(message, 'error');
+                } finally {
+                    setButtonLoading(loginBtn, false);
+                }
+            });
+
+            // --- Google Sign-In ---
+            googleBtn.addEventListener("click", async () => {
+                setButtonLoading(googleBtn, true);
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    const user = result.user;
+                    // CORRECTED: Use Firestore doc and getDoc
+                    const userDocRef = doc(db, "users", user.uid);
+                    const docSnap = await getDoc(userDocRef);
+
+                    if (!docSnap.exists()) {
+                        // If user signs in with Google for the first time, create a default profile in Firestore
+                        await setDoc(userDocRef, {
+                            fullname: user.displayName,
+                            email: user.email,
+                            profileImage: user.photoURL,
+                            role: "student", // Default role (lowercase)
+                            createdAt: new Date()
+                        });
+                    }
+
+                    await redirectUser(user.uid, user.displayName);
+                } catch (error) {
+                     const message = error.code === 'auth/popup-closed-by-user' ? 'Sign-in cancelled.' : 'Google Sign-In Failed.';
+                     showToast(message, 'error');
+                } finally {
+                    setButtonLoading(googleBtn, false);
+                }
+            });
         });
     </script>
 </body>
 </html>
+

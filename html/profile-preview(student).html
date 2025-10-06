@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
+        .tag {
+            background-color: #E0E7FF; color: #3730A3;
+            padding: 0.35rem 0.75rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+        }
+        #toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 10000; display: flex; flex-direction: column; gap: 0.75rem; }
+        .toast { display: flex; align-items: center; padding: 1rem 1.25rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); animation: toast-in 0.3s ease-out forwards; max-width: 350px; }
+        .toast.hiding { animation: toast-out 0.3s ease-in forwards; }
+        .toast-success { background-color: #F0FFF4; border: 1px solid #C6F6D5; color: #2F855A; }
+        .toast-error { background-color: #FFF5F5; border: 1px solid #FEB2B2; color: #C53030; }
+        @keyframes toast-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toast-out { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="toast-container"></div>
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <nav class="container mx-auto px-4 lg:px-8 flex justify-between items-center py-4">
+            <a href="#" class="flex items-center gap-3">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-md font-bold">SS</span>
+                <span class="font-extrabold tracking-tight text-2xl">StudyScribe</span>
+            </a>
+            <div>
+                 <button id="logout-btn" class="text-gray-500 hover:text-purple-600 font-medium">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 lg:px-8 py-8">
+        <div id="loading-state" class="text-center py-20">
+            <h1 class="text-2xl font-bold text-gray-700">Loading Your Dashboard...</h1>
+        </div>
+
+        <div id="dashboard-content" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-gray-800">Your Student Profile</h1>
+                <div class="flex items-center gap-4">
+                     <button id="change-password-btn" class="text-sm font-medium text-gray-600 hover:text-purple-700">Change Password</button>
+                    <a href="/html/profile-setup(student).html" class="inline-flex items-center gap-2 py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700">
+                        <i data-lucide="edit" class="w-4 h-4"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column: Main Info -->
+                <div class="lg:col-span-1 space-y-8">
+                    <div class="bg-white rounded-xl shadow-md p-6 text-center">
+                        <img id="profile-image" src="https://api.dicebear.com/9.x/initials/svg?seed=User" alt="Profile Picture" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-lg">
+                        <h2 id="profile-name" class="text-2xl font-bold mt-4"></h2>
+                        <p class="text-purple-600 font-semibold">Student</p>
+                        <p id="profile-location" class="text-sm text-gray-500 mt-2"></p>
+                    </div>
+                     <div class="bg-white rounded-xl shadow-md p-6">
+                         <h3 class="font-bold text-gray-800 mb-4">Contact Information</h3>
+                         <div class="space-y-3 text-sm">
+                            <p class="flex items-center gap-3"><i data-lucide="mail" class="w-4 h-4 text-gray-400"></i><span id="profile-email"></span></p>
+                            <p class="flex items-center gap-3"><i data-lucide="phone" class="w-4 h-4 text-gray-400"></i><span id="profile-phone"></span></p>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Details -->
+                <div class="lg:col-span-2 space-y-8">
+                     <div class="bg-white rounded-xl shadow-md p-8">
+                        <h3 class="font-bold text-gray-800 mb-4">Academic Details</h3>
+                        <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                            <div><dt class="font-semibold text-gray-800">Standard / Class:</dt><dd id="standard-class" class="text-gray-600"></dd></div>
+                            <div><dt class="font-semibold text-gray-800">College:</dt><dd id="college-name" class="text-gray-600"></dd></div>
+                            <div class="col-span-2"><dt class="font-semibold text-gray-800">College Address:</dt><dd id="college-address" class="text-gray-600"></dd></div>
+                        </dl>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-8">
+                        <h3 class="font-bold text-gray-800 mb-4">Project Needs</h3>
+                         <dl class="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4 text-sm">
+                            <div><dt class="font-semibold text-gray-800">Type of Work:</dt><dd id="work-type" class="text-gray-600"></dd></div>
+                            <div><dt class="font-semibold text-gray-800">Preferred Language:</dt><dd id="language" class="text-gray-600"></dd></div>
+                            <div><dt class="font-semibold text-gray-800">Budget Range (INR):</dt><dd id="budget" class="text-gray-600"></dd></div>
+                        </dl>
+                         <div id="reference-files-container" class="mt-6 hidden">
+                             <h4 class="font-semibold text-sm text-gray-800 mb-2">Uploaded Reference Files</h4>
+                             <div id="reference-links" class="space-y-2"></div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Change Password Modal -->
+    <div id="password-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-2xl p-6 md:p-8 max-w-md w-full">
+            <h3 class="text-lg font-bold text-gray-900 mb-4">Change Your Password</h3>
+            <form id="password-form" class="space-y-4">
+                <div>
+                    <label for="new-password" class="text-sm font-medium text-gray-700">New Password</label>
+                    <input type="password" id="new-password" required class="w-full mt-1 p-2 border rounded-md">
+                </div>
+                <div>
+                    <label for="confirm-password" class="text-sm font-medium text-gray-700">Confirm New Password</label>
+                    <input type="password" id="confirm-password" required class="w-full mt-1 p-2 border rounded-md">
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button type="button" id="cancel-password-change" class="text-sm font-medium text-gray-700 px-4 py-2 rounded-md hover:bg-gray-100">Cancel</button>
+                    <button type="submit" class="text-sm font-medium text-white bg-purple-600 px-4 py-2 rounded-md hover:bg-purple-700">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+     const firebaseConfig = {
+      apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
+      authDomain: "campusreach-c57e0.firebaseapp.com",
+      projectId: "campusreach-c57e0",
+      storageBucket: "gs://campusreach-c57e0.firebasestorage.app",
+      messagingSenderId: "294813850577",
+      appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
+    };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let currentUser = null;
+
+        const showToast = (message, type = 'success') => {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                toast.addEventListener('animationend', () => toast.remove());
+            }, 3000);
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                await loadStudentProfile(user.uid);
+            } else {
+                window.location.href = "/html/login.html";
+            }
+        });
+
+        async function loadStudentProfile(uid) {
+            const userDocRef = doc(db, "users", uid);
+            const docSnap = await getDoc(userDocRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+
+                if (data.role !== 'student') {
+                    window.location.href = '/html/writerr-dashboard.html';
+                    return;
+                }
+
+                document.getElementById('profile-image').src = data.profileImage || `https://api.dicebear.com/9.x/initials/svg?seed=${data.fullname}`;
+                document.getElementById('profile-name').textContent = data.fullname;
+                document.getElementById('profile-location').textContent = `${data.city}, ${data.state}`;
+                document.getElementById('profile-email').textContent = data.email;
+                document.getElementById('profile-phone').textContent = data.phone;
+                
+                document.getElementById('standard-class').textContent = data.standardClass;
+                document.getElementById('college-name').textContent = data.collegeName;
+                document.getElementById('college-address').textContent = data.collegeAddress;
+
+                if(data.projectDetails) {
+                    document.getElementById('work-type').textContent = data.projectDetails.workType;
+                    document.getElementById('language').textContent = data.projectDetails.language;
+                    document.getElementById('budget').textContent = data.projectDetails.budget;
+                }
+                
+                if (data.referenceFileUrls && data.referenceFileUrls.length > 0) {
+                    const linksContainer = document.getElementById('reference-links');
+                    linksContainer.innerHTML = '';
+                    data.referenceFileUrls.forEach((url, index) => {
+                         const link = document.createElement('a');
+                         link.href = url;
+                         link.target = '_blank';
+                         link.className = 'text-purple-600 hover:underline block text-sm';
+                         link.textContent = `Reference File ${index + 1}`;
+                         linksContainer.appendChild(link);
+                    });
+                    document.getElementById('reference-files-container').classList.remove('hidden');
+                }
+
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('dashboard-content').classList.remove('hidden');
+                lucide.createIcons();
+            } else {
+                console.error("User profile not found!");
+                showToast("Could not load profile data.", "error");
+            }
+        }
+        
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).catch(err => showToast("Logout failed.", "error"));
+        });
+
+        const passwordModal = document.getElementById('password-modal');
+        document.getElementById('change-password-btn').addEventListener('click', () => {
+            passwordModal.classList.remove('hidden');
+        });
+        document.getElementById('cancel-password-change').addEventListener('click', () => {
+            passwordModal.classList.add('hidden');
+            document.getElementById('password-form').reset();
+        });
+
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (newPassword.length < 6) {
+                showToast("Password must be at least 6 characters.", "error"); return;
+            }
+            if (newPassword !== confirmPassword) {
+                showToast("Passwords do not match.", "error"); return;
+            }
+            if (!currentUser) return;
+            
+            try {
+                await updatePassword(currentUser, newPassword);
+                showToast("Password updated successfully!", "success");
+                passwordModal.classList.add('hidden');
+                document.getElementById('password-form').reset();
+            } catch (error) {
+                 console.error("Password Update Error:", error);
+                 showToast("Failed to update password. Please log out and log in again.", "error");
+            }
+        });
+
+    </script>
+</body>
+</html>
+

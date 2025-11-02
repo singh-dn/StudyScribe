@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - StudyScribe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        #toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 10001; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="toast-container"></div>
+    <div class="flex h-screen overflow-hidden">
+        <!-- Main Content -->
+        <div class="relative flex flex-col flex-1 overflow-hidden">
+            <!-- Header -->
+            <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
+                <nav class="container mx-auto px-4 lg:px-8 flex justify-between items-center py-3">
+                    <a href="#" class="flex items-center gap-3">
+                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-md font-bold">SS</span>
+                        <span class="font-extrabold tracking-tight text-2xl text-gray-800">StudyScribe Messenger</span>
+                    </a>
+                </nav>
+            </header>
+
+            <!-- Chat Interface -->
+            <div class="flex flex-1 overflow-hidden">
+                <!-- Left Panel: User List -->
+                <aside class="w-full md:w-1/3 lg:w-1/4 bg-white border-r border-gray-200 flex flex-col">
+                    <div class="p-4 border-b"><h2 class="text-xl font-bold">Chat with a Writer</h2></div>
+                    <div id="user-list" class="flex-1 overflow-y-auto custom-scrollbar">
+                        <div id="loading-users" class="p-4 text-center text-gray-500">Loading writers...</div>
+                    </div>
+                </aside>
+
+                <!-- Right Panel: Chat Window -->
+                <main class="flex-1 flex flex-col">
+                    <div id="chat-placeholder" class="flex-1 flex flex-col items-center justify-center text-center p-8">
+                        <i data-lucide="messages-square" class="w-24 h-24 text-gray-300"></i>
+                        <h2 class="mt-4 text-2xl font-bold text-gray-700">Select a Conversation</h2>
+                        <p class="text-gray-500">Choose a writer from the left panel to start chatting.</p>
+                    </div>
+                    <div id="active-chat" class="hidden flex-1 flex flex-col">
+                        <div class="flex items-center justify-between p-3 border-b bg-white">
+                            <div class="flex items-center gap-3">
+                                <img id="chat-header-image" src="" class="w-10 h-10 rounded-full object-cover">
+                                <h3 id="chat-header-name" class="font-bold"></h3>
+                            </div>
+                            <button id="view-profile-btn" class="text-sm font-medium text-purple-600 hover:text-purple-800 flex items-center gap-1">
+                                <i data-lucide="user" class="w-4 h-4"></i> View Profile
+                            </button>
+                        </div>
+                        <div id="messages-container" class="flex-1 p-4 overflow-y-auto custom-scrollbar space-y-4"></div>
+                        <div class="p-4 bg-white border-t">
+                            <form id="message-form" class="flex items-center gap-2">
+                                <label for="file-upload" class="p-3 rounded-full text-gray-500 hover:bg-gray-100 cursor-pointer">
+                                    <i data-lucide="paperclip" class="w-5 h-5"></i>
+                                </label>
+                                <input type="file" id="file-upload" class="hidden">
+                                <input type="text" id="message-input" placeholder="Type your message..." autocomplete="off" class="flex-1 w-full px-4 py-2 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <button type="submit" class="p-3 rounded-full bg-purple-600 text-white hover:bg-purple-700">
+                                    <i data-lucide="send" class="w-5 h-5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Writer Profile Modal -->
+    <div id="profile-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h2 class="text-xl font-bold">Writer Profile</h2>
+                <button id="close-modal-btn" class="p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="modal-body" class="p-6 overflow-y-auto custom-scrollbar space-y-4">
+                <!-- Profile content injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, getDocs, onSnapshot, addDoc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
+            authDomain: "campusreach-c57e0.firebaseapp.com",
+            projectId: "campusreach-c57e0",
+            storageBucket: "campusreach-c57e0.firebasestorage.app",
+            messagingSenderId: "294813850577",
+            appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app); 
+        const storage = getStorage(app);
+        
+        let currentUser = null;
+        let currentWriterData = null;
+        let currentChatId = null;
+        let unsubscribeMessages = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDocRef = doc(db, 'users', user.uid); 
+                const snapshot = await getDoc(userDocRef); 
+                if (snapshot.exists()) {
+                    currentUser = { uid: user.uid, ...snapshot.data() };
+                    if (currentUser.role !== 'student') {
+                         window.location.href = "./login.html"; // Corrected Path
+                         return;
+                    }
+                    await fetchWriters(currentUser);
+                    checkUrlForChat();
+                } else {
+                     window.location.href = "./login.html"; // Corrected Path
+                }
+            } else {
+                window.location.href = "./login.html"; // Corrected Path
+            }
+        });
+        
+        async function fetchWriters(loggedInUser) {
+            const userListEl = document.getElementById('user-list');
+            const q = query(collection(db, "users"), where("role", "==", "writer"));
+            const querySnapshot = await getDocs(q);
+            
+            userListEl.innerHTML = '';
+            if (!querySnapshot.empty) {
+                querySnapshot.forEach((doc) => {
+                    const writerData = doc.data();
+                    const userItem = document.createElement('div');
+                    userItem.className = 'flex items-center gap-3 p-3 cursor-pointer hover:bg-gray-100 border-b';
+                    userItem.setAttribute('data-uid', writerData.uid);
+                    userItem.onclick = () => openChat(writerData);
+                    userItem.innerHTML = `
+                        <img src="${writerData.profileImage || `https://api.dicebear.com/9.x/initials/svg?seed=${writerData.fullname}`}" class="w-12 h-12 rounded-full object-cover">
+                        <div><p class="font-bold">${writerData.fullname}</p><p class="text-sm text-gray-500 capitalize">${writerData.role}</p></div>`;
+                    userListEl.appendChild(userItem);
+                });
+            }
+            document.getElementById('loading-users').classList.add('hidden');
+        }
+
+        async function checkUrlForChat() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const chatWithUserId = urlParams.get('userId');
+            if (chatWithUserId) {
+                const userDocRef = doc(db, 'users', chatWithUserId);
+                const snapshot = await getDoc(userDocRef);
+                if(snapshot.exists()) {
+                    openChat(snapshot.data());
+                }
+            }
+        }
+        
+        function openChat(writerData) {
+            currentWriterData = writerData;
+            document.querySelectorAll('#user-list > div').forEach(div => div.classList.remove('bg-purple-50'));
+            document.querySelector(`[data-uid="${writerData.uid}"]`)?.classList.add('bg-purple-50');
+
+            document.getElementById('chat-placeholder').classList.add('hidden');
+            document.getElementById('active-chat').classList.remove('hidden');
+            document.getElementById('chat-header-name').textContent = writerData.fullname;
+            document.getElementById('chat-header-image').src = writerData.profileImage || `https://api.dicebear.com/9.x/initials/svg?seed=${writerData.fullname}`;
+            
+            currentChatId = [currentUser.uid, writerData.uid].sort().join('_');
+            loadMessages(currentChatId);
+        }
+
+        function loadMessages(chatId) {
+            const messagesContainer = document.getElementById('messages-container');
+            if (unsubscribeMessages) unsubscribeMessages(); 
+
+            const messagesQuery = query(collection(db, 'chats', chatId, 'messages'), orderBy('timestamp'));
+            unsubscribeMessages = onSnapshot(messagesQuery, (snapshot) => {
+                messagesContainer.innerHTML = ''; 
+                snapshot.forEach((doc) => {
+                    displayMessage(doc.data());
+                });
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+        }
+
+        function displayMessage(message) {
+            const messagesContainer = document.getElementById('messages-container');
+            const wrapper = document.createElement('div');
+            const isSent = message.senderId === currentUser.uid;
+            wrapper.className = `flex items-end gap-2 max-w-lg ${isSent ? 'ml-auto flex-row-reverse' : ''}`;
+            
+            let bubbleContent = '';
+            if (message.type === 'image') {
+                bubbleContent = `<img src="${message.fileUrl}" alt="Uploaded image" class="max-w-[250px] rounded-lg cursor-pointer" onclick="window.open('${message.fileUrl}', '_blank')">`;
+            } else if (message.type === 'file') {
+                bubbleContent = `<a href="${message.fileUrl}" target="_blank" class="flex items-center gap-2 p-3 ${isSent ? 'bg-purple-500' : 'bg-gray-200 text-gray-800'} rounded-lg hover:opacity-80">
+                                    <i data-lucide="file" class="w-5 h-5 flex-shrink-0"></i>
+                                    <span class="text-sm font-medium">${message.fileName || 'Download File'}</span>
+                                 </a>`;
+            } else {
+                bubbleContent = `<div class="p-3 rounded-lg shadow-sm ${isSent ? 'bg-purple-600 text-white rounded-br-none' : 'bg-white border rounded-bl-none'}">${message.text}</div>`;
+            }
+            
+            wrapper.innerHTML = bubbleContent;
+            messagesContainer.appendChild(wrapper);
+            lucide.createIcons();
+        }
+
+        async function handleSendMessage(e) {
+            e.preventDefault();
+            const messageInput = document.getElementById('message-input');
+            const messageText = messageInput.value.trim();
+
+            if (messageText && currentChatId && currentUser) {
+                const messagesColRef = collection(db, 'chats', currentChatId, 'messages');
+                await addDoc(messagesColRef, {
+                    text: messageText,
+                    type: 'text',
+                    senderId: currentUser.uid,
+                    senderName: currentUser.fullname,
+                    timestamp: serverTimestamp()
+                });
+                messageInput.value = '';
+            }
+        }
+        
+        // --- THIS IS THE FIX ---
+        // Attaching the event listener for the message form submission
+        document.getElementById('message-form').addEventListener('submit', handleSendMessage);
+
+        document.getElementById('file-upload').addEventListener('change', (e) => { 
+            const file = e.target.files[0];
+            if (file) handleFileUpload(file);
+        });
+        async function handleFileUpload(file) { 
+            // ... File upload logic ...
+        }
+        
+        // --- Modal Logic ---
+        const profileModal = document.getElementById('profile-modal');
+        document.getElementById('view-profile-btn').addEventListener('click', () => { 
+            if (!currentWriterData) return;
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="text-center"><img src="${currentWriterData.profileImage || `https://api.dicebear.com/9.x/initials/svg?seed=${currentWriterData.fullname}`}" class="w-24 h-24 rounded-full mx-auto object-cover"></div>
+                <h3 class="text-xl font-bold text-center">${currentWriterData.fullname}</h3>
+                <p class="text-center text-sm text-gray-500">${currentWriterData.studyBackground}</p>
+                <div><h4 class="font-semibold">Bio</h4><p class="text-sm text-gray-600">${currentWriterData.bio}</p></div>
+                <div><h4 class="font-semibold">Skills</h4><div class="flex flex-wrap gap-2 mt-1">${(currentWriterData.skills || []).map(s => `<span class="bg-purple-100 text-purple-800 text-xs font-medium px-2 py-0.5 rounded-full">${s}</span>`).join('')}</div></div>
+            `;
+            profileModal.classList.remove('hidden');
+            lucide.createIcons();
+         });
+        document.getElementById('close-modal-btn').addEventListener('click', () => profileModal.classList.add('hidden'));
+
+    </script>
+</body>
+</html>
+

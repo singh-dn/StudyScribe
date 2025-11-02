@@ -189,143 +189,28 @@
         </section>
 
         <!-- =========== FeaturedStays.tsx =========== -->
-        <section class="container mx-auto px-4 py-16 reveal">
-            <div class="flex items-end justify-between gap-4">
-                <div>
-                    <h3 class="text-2xl font-bold tracking-tight sm:text-3xl">Featured Practice Question paper and note's</h3>
-                    <p class="mt-2 text-muted-foreground">Hand‑picked spaces loved by students</p>
-                </div>
-                <div class="hidden md:flex items-center gap-2">
-                    <button class="rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent/10 bg-primary text-primary-foreground border-primary btn-anim">MCA</button>
-                    <button class="rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent/10 btn-anim">B.Com</button>
-                    <button class="rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent/10 btn-anim">B.Tec</button>
-                    <button class="rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent/10 btn-anim">Account's</button>
-                </div>
+   <section class="container mx-auto px-4 py-16">
+        <div class="flex items-end justify-between gap-4">
+            <div>
+                <h3 class="text-2xl font-bold tracking-tight sm:text-3xl">Featured Practice Question paper and note's</h3>
+                <p class="mt-2 text-muted-foreground">Hand‑picked spaces loved by students</p>
             </div>
-<div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    <!-- Question Papers -->
-    <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl">
-        <div class="relative">
-            <img src="https://images.unsplash.com/photo-1529101091764-c3526daf38fe?q=80&w=1400&auto=format&fit=crop" alt="Java Question Paper" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-            <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">2023</div>
-        </div>
-        <div class="p-4">
-            <h4 class="font-semibold">Java Question Paper</h4>
-            <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
-                <span>Semester 3</span>
-                <span>·</span>
-                <a href="#" class="text-blue-600 hover:underline">Download</a>
+            <div id="course-filters" class="hidden md:flex items-center gap-2">
+                <button data-course="MCA" class="filter-btn rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent/10 bg-primary text-primary-foreground border-primary btn-anim">MCA</button>
+                <button data-course="B.Com" class="filter-btn rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent/10 btn-anim">B.Com</button>
+                <button data-course="B.Tech CS" class="filter-btn rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent/10 btn-anim">B.Tech</button>
+                <button data-course="Accounts" class="filter-btn rounded-full border px-4 py-2 text-sm transition-colors hover:bg-accent/10 btn-anim">Account's</button>
             </div>
         </div>
-    </article>
+        <div id="resources-grid" class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <!-- Skeleton Loader -->
+            <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm"><div class="h-48 w-full skeleton"></div><div class="p-4 space-y-2"><div class="h-5 w-3/4 skeleton"></div><div class="h-4 w-1/2 skeleton"></div></div></article>
+            <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm"><div class="h-48 w-full skeleton"></div><div class="p-4 space-y-2"><div class="h-5 w-3/4 skeleton"></div><div class="h-4 w-1/2 skeleton"></div></div></article>
+            <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm"><div class="h-48 w-full skeleton"></div><div class="p-4 space-y-2"><div class="h-5 w-3/4 skeleton"></div><div class="h-4 w-1/2 skeleton"></div></div></article>
+            <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm"><div class="h-48 w-full skeleton"></div><div class="p-4 space-y-2"><div class="h-5 w-3/4 skeleton"></div><div class="h-4 w-1/2 skeleton"></div></div></article>
+        </div>
+    </section>
 
-    <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl">
-        <div class="relative">
-            <img src="https://images.unsplash.com/photo-1537432376769-00a5f3c2846a?q=80&w=1400&auto=format&fit=crop" alt="DBMS Question Paper" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-            <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">2024</div>
-        </div>
-        <div class="p-4">
-            <h4 class="font-semibold">DBMS Question Paper</h4>
-            <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
-                <span>Semester 4</span>
-                <span>·</span>
-                <a href="#" class="text-blue-600 hover:underline">Download</a>
-            </div>
-        </div>
-    </article>
-
-    <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl">
-        <div class="relative">
-            <img src="https://images.unsplash.com/photo-1581093588401-9d6e02eb3d4c?q=80&w=1400&auto=format&fit=crop" alt="Data Structures Question Paper" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-            <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">2023</div>
-        </div>
-        <div class="p-4">
-            <h4 class="font-semibold">Data Structures Question Paper</h4>
-            <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
-                <span>Semester 2</span>
-                <span>·</span>
-                <a href="#" class="text-blue-600 hover:underline">Download</a>
-            </div>
-        </div>
-    </article>
-
-    <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl">
-        <div class="relative">
-            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1400&auto=format&fit=crop" alt="OS Question Paper" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-            <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">2024</div>
-        </div>
-        <div class="p-4">
-            <h4 class="font-semibold">Operating System Question Paper</h4>
-            <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
-                <span>Semester 5</span>
-                <span>·</span>
-                <a href="#" class="text-blue-600 hover:underline">Download</a>
-            </div>
-        </div>
-    </article>
-
-    <!-- Notes -->
-    <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl">
-        <div class="relative">
-            <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=1400&auto=format&fit=crop" alt="Computer Networks Notes" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-            <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">PDF</div>
-        </div>
-        <div class="p-4">
-            <h4 class="font-semibold">Computer Networks Notes</h4>
-            <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
-                <span>Unit 1-5</span>
-                <span>·</span>
-                <a href="#" class="text-blue-600 hover:underline">View</a>
-            </div>
-        </div>
-    </article>
-
-    <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl">
-        <div class="relative">
-            <img src="https://images.unsplash.com/photo-1584697964194-8e9a2f1a1f14?q=80&w=1400&auto=format&fit=crop" alt="Operating System Notes" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-            <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">Handwritten</div>
-        </div>
-        <div class="p-4">
-            <h4 class="font-semibold">Operating System Notes</h4>
-            <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
-                <span>Detailed</span>
-                <span>·</span>
-                <a href="#" class="text-blue-600 hover:underline">View</a>
-            </div>
-        </div>
-    </article>
-
-    <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl">
-        <div class="relative">
-            <img src="https://images.unsplash.com/photo-1596495577886-d920f1fb07a4?q=80&w=1400&auto=format&fit=crop" alt="DBMS Notes" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-            <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">PDF</div>
-        </div>
-        <div class="p-4">
-            <h4 class="font-semibold">DBMS Notes</h4>
-            <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
-                <span>Unit 1-6</span>
-                <span>·</span>
-                <a href="#" class="text-blue-600 hover:underline">View</a>
-            </div>
-        </div>
-    </article>
-
-    <article class="group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl">
-        <div class="relative">
-            <img src="https://images.unsplash.com/photo-1593642532973-d31b6557fa68?q=80&w=1400&auto=format&fit=crop" alt="Java Notes" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
-            <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">PDF</div>
-        </div>
-        <div class="p-4">
-            <h4 class="font-semibold">Java Notes</h4>
-            <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
-                <span>Complete</span>
-                <span>·</span>
-                <a href="#" class="text-blue-600 hover:underline">View</a>
-            </div>
-        </div>
-</article>
-            </div>
-        </section>
         <section class="container mx-auto px-4 py-16 reveal">
           <h3 class="text-center text-2xl font-bold tracking-tight sm:text-3xl">How it works</h3>
           <div class="mt-8 grid gap-6 sm:grid-cols-3">
@@ -413,102 +298,19 @@
   </div>
 </div>
 
-        <section class="container mx-auto px-4 py-16 reveal">
-            <div class="flex items-end justify-between">
-                <div>
-                    <h3 class="text-2xl font-bold tracking-tight sm:text-3xl">Witter's List</h3>
-                    <p class="mt-2 text-muted-foreground">People inspiring our community</p>
-                </div>
-                <a href="#" class="text-sm font-semibold text-primary transition-colors hover:text-accent">View all</a>
+       <section class="container mx-auto px-4 py-16 reveal">
+        <div class="flex items-end justify-between">
+            <div>
+                <h3 class="text-2xl font-bold tracking-tight sm:text-3xl">Writer's List</h3>
+                <p class="mt-2 text-muted-foreground">People inspiring our community</p>
             </div>
-            <div class="mt-6 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                <!-- Author Cards -->
-                <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=1" alt="Alex Kim" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Alex Kim</div>
-                        <div class="text-sm text-muted-foreground">Traveler</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=2" alt="Jordan Lee" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Jordan Lee</div>
-                        <div class="text-sm text-muted-foreground">Host</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=3" alt="Sam Patel" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Sam Patel</div>
-                        <div class="text-sm text-muted-foreground">Writer</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=4" alt="Taylor Fox" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Taylor Fox</div>
-                        <div class="text-sm text-muted-foreground">Student</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=5" alt="Alex Kim" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Alex Kim</div>
-                        <div class="text-sm text-muted-foreground">Traveler</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=6" alt="Jordan Lee" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Jordan Lee</div>
-                        <div class="text-sm text-muted-foreground">Host</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=7" alt="Sam Patel" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Sam Patel</div>
-                        <div class="text-sm text-muted-foreground">Writer</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=8" alt="Taylor Fox" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Taylor Fox</div>
-                        <div class="text-sm text-muted-foreground">Student</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=9" alt="Alex Kim" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Alex Kim</div>
-                        <div class="text-sm text-muted-foreground">Traveler</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=10" alt="Jordan Lee" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Jordan Lee</div>
-                        <div class="text-sm text-muted-foreground">Host</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=11" alt="Sam Patel" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Sam Patel</div>
-                        <div class="text-sm text-muted-foreground">Writer</div>
-                    </div>
-                </div>
-                 <div class="flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50">
-                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=12" alt="Taylor Fox" class="h-12 w-12 rounded-full" />
-                    <div>
-                        <div class="font-semibold">Taylor Fox</div>
-                        <div class="text-sm text-muted-foreground">Student</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+            <a href="./writer-list.html" class="text-sm font-semibold text-primary transition-colors hover:opacity-80">View all</a>
+        </div>
+        <div id="writers-grid-container" class="mt-6 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <!-- This part will be populated by the script -->
+            <p id="loading-writers" class="text-muted-foreground">Loading writers...</p>
+        </div>
+    </section>
 
          <section class="container mx-auto px-4 py-16 reveal">
           <h3 class="text-2xl font-bold tracking-tight sm:text-3xl">Assignment Done By Our Writers</h3>
@@ -742,7 +544,294 @@
             </div>
           </div>
     </footer>
+     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, limit, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
+            authDomain: "campusreach-c57e0.firebaseapp.com",
+            projectId: "campusreach-c57e0",
+            storageBucket: "campusreach-c57e0.firebasestorage.app",
+            messagingSenderId: "294813850577",
+            appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let allFeaturedResources = [];
+
+        // --- WRITER FETCH LOGIC ---
+        async function fetchAndDisplayWriters() {
+            const gridContainer = document.getElementById('writers-grid-container');
+            try {
+                const q = query(
+                    collection(db, "users"), 
+                    where("role", "==", "writer"), 
+                    where("profileSetupComplete", "==", true),
+                    limit(8) 
+                );
+                const querySnapshot = await getDocs(q);
+                
+                gridContainer.innerHTML = ''; 
+
+                if (querySnapshot.empty) {
+                    gridContainer.innerHTML = '<p class="text-muted-foreground col-span-full">No writers found.</p>';
+                    return;
+                }
+
+                querySnapshot.forEach(doc => {
+                    const writer = doc.data();
+                    const writerCard = document.createElement('a');
+                    writerCard.href = "./login.html"; 
+                    writerCard.className = "flex items-center gap-4 rounded-2xl border p-4 transition-all-300 hover:shadow-md hover:border-primary/50";
+                    writerCard.innerHTML = `
+                        <img src="${writer.profileImage || `https://api.dicebear.com/9.x/initials/svg?seed=${writer.fullname}`}" alt="${writer.fullname}" class="h-12 w-12 rounded-full object-cover" />
+                        <div>
+                            <div class="font-semibold">${writer.fullname}</div>
+                            <div class="text-sm text-muted-foreground">${writer.studyBackground || 'Writer'}</div>
+                        </div>
+                    `;
+                    gridContainer.appendChild(writerCard);
+                });
+
+            } catch (error) {
+                console.error("Error fetching writers: ", error);
+                gridContainer.innerHTML = '<p class="text-red-500 col-span-full">Could not load writers.</p>';
+            }
+        }
+
+        // --- FEATURED RESOURCES LOGIC ---
+        async function fetchAndDisplayFeaturedResources() {
+            const resourcesGrid = document.getElementById('resources-grid');
+            try {
+                const q = query(
+                    collection(db, "resources"), 
+                    where("type", "in", ["notes", "paper"]),
+                    limit(8)
+                );
+                const querySnapshot = await getDocs(q);
+                
+                allFeaturedResources = querySnapshot.docs.map(doc => doc.data());
+                
+                const initialFilter = allFeaturedResources.filter(r => r.course === 'MCA');
+                displayResources(initialFilter.length > 0 ? initialFilter : allFeaturedResources);
+
+            } catch (error) {
+                console.error("Error fetching resources: ", error);
+                resourcesGrid.innerHTML = '<p class="text-red-500 col-span-full">Could not load resources.</p>';
+            }
+        }
+
+        function displayResources(resources) {
+            const resourcesGrid = document.getElementById('resources-grid');
+            resourcesGrid.innerHTML = ''; 
+
+            if (resources.length === 0) {
+                resourcesGrid.innerHTML = '<p class="text-gray-500 col-span-full">No resources found for this filter.</p>';
+                return;
+            }
+
+            resources.forEach(res => {
+                const card = document.createElement('article');
+                card.className = "group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl";
+                const subjectForImage = (res.subject || 'code').split(' ')[0];
+                
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="https://source.unsplash.com/400x300/?${subjectForImage},study" alt="${res.title}" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                        <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">${res.year || res.type}</div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold">${res.title}</h4>
+                        <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
+                            <span>Semester ${res.semester || 'N/A'}</span>
+                            <span>·</span>
+                            <a href="${res.fileUrl}" target="_blank" class="text-blue-600 hover:underline">${res.price > 0 ? `Buy for ₹${res.price}` : 'Download'}</a>
+                        </div>
+                    </div>
+                `;
+                resourcesGrid.appendChild(card);
+            });
+        }
+
+        // --- MAIN DOMContentLoaded LISTENER ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            
+            // Initial Data Fetch
+            fetchAndDisplayFeaturedResources();
+            fetchAndDisplayWriters();
+
+            // Auth State Logic for Header
+            onAuthStateChanged(auth, async (user) => {
+                const navRightSide = document.getElementById('nav-right-side');
+                const navLoginLink = document.getElementById('nav-login-link');
+                if (user) {
+                    const docSnap = await getDoc(doc(db, "users", user.uid));
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        document.getElementById('navbar-profile-image').src = userData.profileImage || `https://api.dicebear.com/9.x/initials/svg?seed=${userData.fullname}`;
+                        document.getElementById('navbar-user-name').textContent = userData.fullname;
+                        document.getElementById('my-profile-link').href = userData.role === 'student' ? './student-dashboard.html' : './writer-dashboard.html';
+                        navRightSide.classList.remove('hidden');
+                        navRightSide.classList.add('flex');
+                        navLoginLink.classList.add('hidden');
+                    }
+                } else {
+                    navRightSide.classList.add('hidden');
+                    navLoginLink.classList.remove('hidden');
+                }
+            });
+
+            // UI Event Listeners
+            const profileBtn = document.getElementById('profile-dropdown-btn');
+            const profileMenu = document.getElementById('profile-dropdown-menu');
+            profileBtn.addEventListener('click', (e) => { e.stopPropagation(); profileMenu.classList.toggle('hidden'); });
+            document.addEventListener('click', () => profileMenu.classList.add('hidden'));
+            document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+
+            document.getElementById('course-filters').addEventListener('click', (e) => {
+                if(e.target.tagName === 'BUTTON') {
+                    document.querySelectorAll('#course-filters .filter-btn').forEach(btn => {
+                        btn.classList.remove('bg-primary', 'text-primary-foreground', 'border-primary');
+                    });
+                    e.target.classList.add('bg-primary', 'text-primary-foreground', 'border-primary');
+                    const course = e.target.dataset.course;
+                    const filtered = course === 'All' ? allFeaturedResources : allFeaturedResources.filter(r => r.course === course);
+                    displayResources(filtered);
+                }
+            });
+
+            const revealElements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+            }, { threshold: 0.1 });
+            revealElements.forEach(el => observer.observe(el));
+        });
+    </script>
 <script src="/javascript/script.js"></script>
+<!-- <script type="module"> -->
+        <!-- import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, limit, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
+            authDomain: "campusreach-c57e0.firebaseapp.com",
+            projectId: "campusreach-c57e0",
+            storageBucket: "campusreach-c57e0.firebasestorage.app",
+            messagingSenderId: "294813850577",
+            appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let allFeaturedResources = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            fetchAndDisplayFeaturedResources();
+
+            onAuthStateChanged(auth, async (user) => {
+                const navRightSide = document.getElementById('nav-right-side');
+                const navLoginLink = document.getElementById('nav-login-link');
+                if (user) {
+                    const docSnap = await getDoc(doc(db, "users", user.uid));
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        document.getElementById('navbar-profile-image').src = userData.profileImage || `https://api.dicebear.com/9.x/initials/svg?seed=${userData.fullname}`;
+                        document.getElementById('navbar-user-name').textContent = userData.fullname;
+                        document.getElementById('my-profile-link').href = userData.role === 'student' ? './student-dashboard.html' : './writer-dashboard.html';
+                        navRightSide.classList.remove('hidden');
+                        navRightSide.classList.add('flex');
+                        navLoginLink.classList.add('hidden');
+                    }
+                } else {
+                    navRightSide.classList.add('hidden');
+                    navLoginLink.classList.remove('hidden');
+                }
+            });
+
+            const profileBtn = document.getElementById('profile-dropdown-btn');
+            const profileMenu = document.getElementById('profile-dropdown-menu');
+            profileBtn.addEventListener('click', (e) => { e.stopPropagation(); profileMenu.classList.toggle('hidden'); });
+            document.addEventListener('click', () => profileMenu.classList.add('hidden'));
+            document.getElementById('logout-btn').addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+
+            document.getElementById('course-filters').addEventListener('click', (e) => {
+                if(e.target.tagName === 'BUTTON') {
+                    document.querySelectorAll('#course-filters .filter-btn').forEach(btn => {
+                        btn.classList.remove('bg-primary', 'text-primary-foreground', 'border-primary');
+                    });
+                    e.target.classList.add('bg-primary', 'text-primary-foreground', 'border-primary');
+                    const course = e.target.dataset.course;
+                    const filtered = course === 'All' ? allFeaturedResources : allFeaturedResources.filter(r => r.course === course);
+                    displayResources(filtered);
+                }
+            });
+        });
+
+        async function fetchAndDisplayFeaturedResources() {
+            const resourcesGrid = document.getElementById('resources-grid');
+            try {
+                const q = query(
+                    collection(db, "resources"), 
+                    where("type", "in", ["notes", "paper"]),
+                    limit(8)
+                );
+                const querySnapshot = await getDocs(q);
+                
+                allFeaturedResources = querySnapshot.docs.map(doc => doc.data());
+                
+                // Initially display MCA resources by default
+                const initialFilter = allFeaturedResources.filter(r => r.course === 'MCA');
+                displayResources(initialFilter.length > 0 ? initialFilter : allFeaturedResources);
+
+            } catch (error) {
+                console.error("Error fetching resources: ", error);
+                resourcesGrid.innerHTML = '<p class="text-red-500 col-span-full">Could not load resources.</p>';
+            }
+        }
+
+        function displayResources(resources) {
+            const resourcesGrid = document.getElementById('resources-grid');
+            resourcesGrid.innerHTML = ''; // Clear previous content
+
+            if (resources.length === 0) {
+                resourcesGrid.innerHTML = '<p class="text-gray-500 col-span-full">No resources found for this filter.</p>';
+                return;
+            }
+
+            resources.forEach(res => {
+                const card = document.createElement('article');
+                card.className = "group overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-sm transition-all-300 hover:shadow-xl";
+                
+                // Simple image placeholder based on subject
+                const subjectForImage = (res.subject || 'code').split(' ')[0];
+                
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="https://source.unsplash.com/400x300/?${subjectForImage},study" alt="${res.title}" class="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                        <div class="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-semibold shadow">${res.year || res.type}</div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="font-semibold">${res.title}</h4>
+                        <div class="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
+                            <span>Semester ${res.semester || 'N/A'}</span>
+                            <span>·</span>
+                            <a href="${res.fileUrl}" target="_blank" class="text-blue-600 hover:underline">${res.price > 0 ? `Buy for ₹${res.price}` : 'Download'}</a>
+                        </div>
+                    </div>
+                `;
+                resourcesGrid.appendChild(card);
+            });
+            lucide.createIcons();
+        } -->
+    <!-- </script> -->
 </body>
 </html>
 

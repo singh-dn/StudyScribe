@@ -3,356 +3,478 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question Papers - StudyScribe</title>
+    <title>Resources - StudyScribe (Upload + Dynamic Filters)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root {
-            --primary: 262 83% 61%;
-            --secondary: 210 40% 97%;
-            --muted-foreground: 220 15% 40%;
-            --border: 214.3 31.8% 91.4%;
-            --card: 0 0% 100%;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #F0F2F5;
-        }
+        :root { --primary: 262 83% 61%; }
+        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; }
         .text-primary { color: hsl(var(--primary)); }
         .bg-primary { background-color: hsl(var(--primary)); }
-        .text-primary-foreground { color: white; }
         .ring-primary { --tw-ring-color: hsl(var(--primary)); }
         .border-primary { border-color: hsl(var(--primary)); }
         .accent-primary { accent-color: hsl(var(--primary)); }
-
-        .transition-all-300 { transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); }
         .btn-anim:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .skeleton { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; background-color: #e2e8f0; }
         @keyframes pulse { 50% { opacity: .5; } }
-        
-        .tab-btn.active { border-color: hsl(var(--primary)); color: hsl(var(--primary)); background-color: hsla(var(--primary), 0.1); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .modal-content { animation: slide-up 0.3s ease-out; }
-        @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #toast-container { position: fixed; top: 1.5rem; right: 1.5rem; z-index: 10001; display: flex; flex-direction: column; gap: 0.75rem; }
+        .toast { display: flex; align-items: center; padding: 1rem 1.25rem; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); animation: toast-in 0.3s ease-out forwards; max-width: 350px; }
+        .toast.hiding { animation: toast-out 0.3s ease-in forwards; }
+        .toast-success { background-color: #F0FFF4; border: 1px solid #C6F6D5; color: #2F855A; }
+        .toast-error { background-color: #FFF5F5; border: 1px solid #FEB2B2; color: #C53030; }
+        @keyframes toast-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toast-out { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        .form-input { margin-top: 0.25rem; display: block; width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #D1D5DB; border-radius: 0.375rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        /* Swiper Styles */
+        .swiper-slide { width: auto !important; }
+        .swiper-slide button.active { background-color: hsl(var(--primary)); color: white; }
+        /* Drag-drop area small tweaks */
+        .dropzone { border: 2px dashed #D1D5DB; border-radius: 0.5rem; padding: 2.25rem; text-align: center; cursor: pointer; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
+    <div id="toast-container"></div>
 
-    <!-- =========== Top Navigation (Reused from Dashboard) =========== -->
+    <!-- Header -->
     <header class="sticky top-0 bg-white/80 backdrop-blur-sm border-b border-gray-200 z-30">
-        <div class="px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 -mb-px">
+        <div class="container mx-auto max-w-9xl px-4 sm:px-6 lg:px-8">
+             <div class="flex items-center justify-between h-16 -mb-px">
                 <div class="flex items-center space-x-4">
                     <a href="#" class="flex items-center gap-2"><span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-tr from-purple-600 to-cyan-500 text-white shadow-sm">SS</span><span class="font-extrabold tracking-tight text-xl hidden sm:inline">StudyScribe</span></a>
-                    <nav class="hidden lg:flex items-center space-x-1 bg-gray-100 p-1 rounded-full">
-                        <a href="#" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Dashboard</a>
-                        <a href="#" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Find Writers</a>
-                        <a href="#" class="px-3 py-1 text-sm font-medium rounded-full bg-white text-primary shadow">Question Papers</a>
-                        <a href="#" class="px-3 py-1 text-sm font-medium text-gray-600 hover:text-gray-900">Notes</a>
-                    </nav>
                 </div>
                 <div class="flex items-center space-x-3">
-                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="bell" class="w-5 h-5 text-gray-500"></i></button>
-                     <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="message-square" class="w-5 h-5 text-gray-500"></i></button>
-                    <div class="relative" id="profile-dropdown-container">
-                        <button id="profile-dropdown-btn" class="flex items-center space-x-2">
-                            <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=DevSingh" alt="User avatar">
-                            <span class="hidden md:inline text-sm font-medium">Dev Singh</span><i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
-                        </button>
-                        <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Purchases</a><a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a><a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
-                        </div>
-                    </div>
+                    <button id="open-upload-btn" class="text-sm font-semibold text-white bg-primary px-4 py-2 rounded-full shadow btn-anim">Upload Your Content</button>
                 </div>
             </div>
         </div>
     </header>
 
     <div class="container mx-auto max-w-9xl px-4 sm:px-6 lg:px-8 py-8">
-        <!-- =========== Page Header =========== -->
         <section class="text-center mb-8">
-            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">📄 Question Papers & Notes</h1>
-            <p class="mt-2 text-lg text-gray-500">Upload your question papers or explore others. Learn smarter, not harder.</p>
-            <div class="mt-6 flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
-                <div class="relative flex-1">
-                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
-                    <input type="search" placeholder="Search by subject, keywords, year..." class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full focus:ring-2 focus:ring-primary focus:border-primary">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900">📄 Resources Hub</h1>
+            <p class="mt-2 text-lg text-gray-500">Explore Question Papers, Notes, and Career Roadmaps from the community.</p>
+        </section>
+
+        <!-- NEW: Swiper Filter Section -->
+        <section class="mb-8">
+            <div class="swiper-container">
+                <div class="swiper-wrapper" id="type-filter-swiper">
+                    <div class="swiper-slide"><button data-type="all" class="type-filter-btn active text-sm font-semibold px-4 py-2 rounded-full bg-gray-200 text-gray-700">All</button></div>
+                    <div class="swiper-slide"><button data-type="paper" class="type-filter-btn text-sm font-semibold px-4 py-2 rounded-full bg-gray-200 text-gray-700">Question Papers</button></div>
+                    <div class="swiper-slide"><button data-type="notes" class="type-filter-btn text-sm font-semibold px-4 py-2 rounded-full bg-gray-200 text-gray-700">Notes</button></div>
+                    <div class="swiper-slide"><button data-type="roadmap" class="type-filter-btn text-sm font-semibold px-4 py-2 rounded-full bg-gray-200 text-gray-700">Roadmaps</button></div>
                 </div>
-                <button id="open-upload-modal" class="bg-primary text-white font-semibold py-3 px-6 rounded-full flex items-center justify-center gap-2 btn-anim">
-                    <i data-lucide="upload-cloud" class="w-5 h-5"></i>
-                    Upload Content
-                </button>
             </div>
         </section>
 
         <div class="flex flex-col lg:flex-row gap-8">
-            <!-- =========== Filters Sidebar =========== -->
             <aside class="w-full lg:w-1/4 xl:w-1/5">
                 <div class="sticky top-24">
                     <h2 class="text-lg font-bold mb-4">Filters</h2>
-                    <div class="space-y-6">
-                        <!-- Subjects Filter -->
-                        <div>
-                            <h3 class="font-semibold mb-2">Subject</h3>
-                            <div class="space-y-2 text-sm">
-                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary mr-2">Computer Science</label>
-                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary mr-2">Mathematics</label>
-                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary accent-primary mr-2">Physics</label>
-                            </div>
-                        </div>
-                        <!-- Academic Level -->
-                        <div>
-                           <h3 class="font-semibold mb-2">Academic Level</h3>
-                           <select class="w-full text-sm border-gray-300 rounded-md focus:ring-primary focus:border-primary">
-                               <option>Any Level</option><option>High School</option><option>College</option><option>University</option>
-                           </select>
-                        </div>
-                        <!-- Year -->
-                         <div>
-                           <h3 class="font-semibold mb-2">Year</h3>
-                           <select class="w-full text-sm border-gray-300 rounded-md focus:ring-primary focus:border-primary">
-                               <option>Any Year</option><option>2024</option><option>2023</option><option>2022</option>
-                           </select>
-                        </div>
-                        <!-- Price -->
-                        <div>
-                            <h3 class="font-semibold mb-2">Price</h3>
-                            <div class="flex gap-4 text-sm"><label class="flex items-center"><input type="radio" name="price" class="h-4 w-4 text-primary focus:ring-primary accent-primary mr-2">Any</label><label class="flex items-center"><input type="radio" name="price" class="h-4 w-4 text-primary focus:ring-primary accent-primary mr-2">Free</label><label class="flex items-center"><input type="radio" name="price" class="h-4 w-4 text-primary focus:ring-primary accent-primary mr-2">Paid</label></div>
-                        </div>
+                    <div id="filters-container" class="space-y-6">
+                        <!-- Filters populated by JS -->
                     </div>
                 </div>
             </aside>
 
-            <!-- =========== Main Content Area =========== -->
             <main class="flex-1">
-                <!-- Tabs -->
-                <div class="border-b mb-4">
-                    <nav class="-mb-px flex space-x-6" id="main-tabs">
-                        <button class="tab-btn active py-2 px-1 border-b-2 font-medium text-sm" data-tab="all-papers">All Papers</button>
-                        <button class="tab-btn py-2 px-1 border-b-2 font-medium text-sm" data-tab="my-papers">My Papers</button>
-                    </nav>
+                 <div id="resources-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                     <!-- Skeleton loaders -->
+                 </div>
+                 <div id="no-results" class="hidden text-center py-10">
+                    <i data-lucide="search-x" class="w-12 h-12 mx-auto text-gray-400"></i>
+                    <p class="mt-4 text-gray-600">No resources found. Try adjusting your filters.</p>
                 </div>
-                
-                <!-- All Papers Content -->
-                <div id="all-papers" class="tab-content active">
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                        <!-- Paper Card 1 -->
-                        <div class="bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg">
-                           <div class="p-4"><h3 class="font-bold text-lg truncate">Computer Science Final 2023</h3><p class="text-xs text-gray-500">CS, BCA, 3rd Year</p></div>
-                           <div class="px-4 pb-4 space-y-3">
-                               <div class="flex items-center justify-between text-sm"><span class="flex items-center gap-1.5"><i data-lucide="user-circle" class="w-4 h-4 text-gray-400"></i>Priya S.</span><span class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i>25 Pages</span></div>
-                               <div class="flex items-center justify-between text-sm"><span class="flex items-center gap-1.5"><i data-lucide="star" class="w-4 h-4 text-amber-400 fill-current"></i>4.9 (1.2k)</span><span class="flex items-center gap-1.5"><i data-lucide="download" class="w-4 h-4 text-gray-400"></i>5k+ Downloads</span></div>
-                           </div>
-                           <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-primary">₹50</span><div class="flex gap-2"><button class="open-preview-modal text-sm font-semibold hover:text-primary">Preview</button><button class="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm btn-anim">Buy</button></div></div>
-                        </div>
-                        <!-- Paper Card 2 (Free) -->
-                        <div class="bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg">
-                           <div class="p-4"><h3 class="font-bold text-lg truncate">Calculus Mid-term 2024</h3><p class="text-xs text-gray-500">Mathematics, B.Sc, 1st Year</p></div>
-                           <div class="px-4 pb-4 space-y-3">
-                               <div class="flex items-center justify-between text-sm"><span class="flex items-center gap-1.5"><i data-lucide="user-circle" class="w-4 h-4 text-gray-400"></i>Dev Singh</span><span class="flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-gray-400"></i>10 Pages</span></div>
-                               <div class="flex items-center justify-between text-sm"><span class="flex items-center gap-1.5"><i data-lucide="star" class="w-4 h-4 text-amber-400 fill-current"></i>4.8 (800)</span><span class="flex items-center gap-1.5"><i data-lucide="download" class="w-4 h-4 text-gray-400"></i>2.1k+ Downloads</span></div>
-                           </div>
-                           <div class="p-4 bg-gray-50 border-t flex justify-between items-center"><span class="text-lg font-bold text-green-600">Free</span><div class="flex gap-2"><button class="open-preview-modal text-sm font-semibold hover:text-primary">Preview</button><button class="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm btn-anim">Download</button></div></div>
-                        </div>
-                        <!-- Skeleton Loader Card -->
-                        <div class="bg-white rounded-lg shadow-sm border overflow-hidden p-4 space-y-4">
-                            <div class="h-6 w-3/4 rounded skeleton"></div><div class="h-4 w-1/2 rounded skeleton"></div>
-                            <div class="flex justify-between"><div class="h-4 w-1/3 rounded skeleton"></div><div class="h-4 w-1/4 rounded skeleton"></div></div>
-                            <div class="flex justify-between"><div class="h-4 w-1/3 rounded skeleton"></div><div class="h-4 w-1/4 rounded skeleton"></div></div>
-                            <div class="flex justify-between items-center pt-4 mt-2 border-t"><div class="h-8 w-1/4 rounded skeleton"></div><div class="h-10 w-1/3 rounded-full skeleton"></div></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- My Papers Content -->
-                <div id="my-papers" class="tab-content">
-                    <div class="bg-white rounded-lg shadow-sm border p-4">
-                        <h3 class="font-bold text-lg">My Uploaded Papers</h3>
-                        <div class="mt-4 space-y-3">
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-                                <div><p class="font-semibold">Calculus Mid-term 2024</p><p class="text-xs text-gray-500">Downloads: 2,142 • Earnings: ₹0</p></div>
-                                <div class="flex gap-2"><button class="text-xs font-semibold p-2 hover:bg-gray-200 rounded-full"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button class="text-xs font-semibold p-2 hover:bg-red-100 text-red-500 rounded-full"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </main>
         </div>
     </div>
     
-    <!-- Upload Modal -->
-    <div id="upload-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+    <!-- Upload Modal (floating) -->
+     <div id="upload-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-12 p-4">
+        <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[86vh] flex flex-col overflow-hidden">
             <div class="p-6 border-b flex justify-between items-center"><h2 id="upload-modal-title" class="text-2xl font-bold">Upload Your Content</h2><button id="close-upload-modal" class="p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-6 h-6"></i></button></div>
-            
-            <div id="upload-step-1" class="p-8 text-center">
-                <h3 class="font-semibold text-lg">What would you like to upload?</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
-                    <button data-upload-type="paper" class="upload-type-btn border-2 rounded-xl p-6 text-center hover:border-primary hover:bg-primary/5 transition-all"><i data-lucide="file-text" class="mx-auto h-10 w-10 text-primary"></i><h4 class="font-bold mt-2">Question Paper</h4></button>
-                    <button data-upload-type="notes" class="upload-type-btn border-2 rounded-xl p-6 text-center hover:border-primary hover:bg-primary/5 transition-all"><i data-lucide="book-marked" class="mx-auto h-10 w-10 text-primary"></i><h4 class="font-bold mt-2">Notes</h4></button>
-                    <button data-upload-type="roadmap" class="upload-type-btn border-2 rounded-xl p-6 text-center hover:border-primary hover:bg-primary/5 transition-all"><i data-lucide="map" class="mx-auto h-10 w-10 text-primary"></i><h4 class="font-bold mt-2">Roadmap</h4></button>
+            <!-- Type selector -->
+            <div class="p-6 border-b">
+                <div class="flex gap-3">
+                    <button data-upload-type="notes" class="upload-type-btn px-3 py-2 rounded-full border">Notes</button>
+                    <button data-upload-type="paper" class="upload-type-btn px-3 py-2 rounded-full border">Question Paper</button>
+                    <button data-upload-type="roadmap" class="upload-type-btn px-3 py-2 rounded-full border">Roadmap</button>
                 </div>
             </div>
 
-            <form id="upload-form-paper" class="upload-form hidden p-6 flex-1 overflow-y-auto space-y-4">
-                <div><label for="paper-title" class="text-sm font-medium">Title</label><input id="paper-title" type="text" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label for="paper-subject" class="text-sm font-medium">Subject</label><input id="paper-subject" type="text" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
-                    <div><label for="paper-year" class="text-sm font-medium">Year</label><input id="paper-year" type="number" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
-                </div>
-                <div><label for="paper-desc" class="text-sm font-medium">Description</label><textarea id="paper-desc" rows="3" class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></textarea></div>
-                <div><label class="text-sm font-medium">Upload File</label><div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"><div class="space-y-1 text-center"><i data-lucide="upload-cloud" class="mx-auto h-12 w-12 text-gray-400"></i><p class="text-sm text-gray-600">Drag & drop or <span class="text-primary font-semibold">browse</span></p><p class="text-xs text-gray-500">PDF, DOCX, PNG, JPG up to 10MB</p></div></div></div>
-                <div><label class="text-sm font-medium">Set Price</label><div class="flex items-center gap-4 mt-1"><label class="flex items-center"><input type="radio" name="price-upload-paper" checked class="accent-primary mr-2">Free</label><label class="flex items-center"><input type="radio" name="price-upload-paper" class="accent-primary mr-2">Paid</label><input type="number" placeholder="₹XXX" class="text-sm border-gray-300 rounded-md shadow-sm w-24"></div></div>
-                <div class="mt-4 p-3 bg-red-50 border-l-4 border-red-400 text-red-800 text-xs rounded">Only original, clear scanned papers are allowed. Plagiarism leads to account ban.</div>
+            <form id="upload-form" class="upload-form p-6 flex-1 overflow-y-auto space-y-4" novalidate>
+                <!-- Dynamic form fields will be injected here -->
+                <div id="upload-fields"></div>
             </form>
 
-            <form id="upload-form-notes" class="upload-form hidden p-6 flex-1 overflow-y-auto space-y-4">
-                <div><label for="notes-title" class="text-sm font-medium">Notes Title</label><input id="notes-title" type="text" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
-                <div><label for="notes-subject" class="text-sm font-medium">Subject</label><input id="notes-subject" type="text" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
-                <div><label for="notes-desc" class="text-sm font-medium">Description</label><textarea id="notes-desc" rows="3" class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></textarea></div>
-                <div><label class="text-sm font-medium">Upload File</label><div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"><div class="space-y-1 text-center"><i data-lucide="upload-cloud" class="mx-auto h-12 w-12 text-gray-400"></i><p class="text-sm text-gray-600">Drag & drop or <span class="text-primary font-semibold">browse</span></p><p class="text-xs text-gray-500">PDF, DOCX up to 10MB</p></div></div></div>
-                <div><label class="text-sm font-medium">Set Price</label><div class="flex items-center gap-4 mt-1"><label class="flex items-center"><input type="radio" name="price-upload-notes" checked class="accent-primary mr-2">Free</label><label class="flex items-center"><input type="radio" name="price-upload-notes" class="accent-primary mr-2">Paid</label><input type="number" placeholder="₹XXX" class="text-sm border-gray-300 rounded-md shadow-sm w-24"></div></div>
-                <div class="mt-4 p-3 bg-red-50 border-l-4 border-red-400 text-red-800 text-xs rounded">Only upload your original notes. Plagiarism will result in a ban.</div>
-            </form>
-
-            <form id="upload-form-roadmap" class="upload-form hidden p-6 flex-1 overflow-y-auto space-y-4">
-                <div><label for="roadmap-title" class="text-sm font-medium">Roadmap Title</label><input id="roadmap-title" type="text" placeholder="e.g., Ultimate Web Development Roadmap 2025" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
-                <div><label for="roadmap-career" class="text-sm font-medium">Career Path</label><input id="roadmap-career" type="text" placeholder="e.g., Full-Stack Developer" required class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
-                <div><label for="roadmap-desc" class="text-sm font-medium">Description</label><textarea id="roadmap-desc" rows="4" placeholder="Briefly describe what this roadmap covers and who it's for..." class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></textarea></div>
-                <div><label class="text-sm font-medium">Cover Image (Optional)</label><div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md"><div class="space-y-1 text-center"><i data-lucide="image" class="mx-auto h-12 w-12 text-gray-400"></i><p class="text-sm text-gray-600">Upload a cover image</p></div></div></div>
-                 <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-400 text-blue-800 text-xs rounded">Roadmaps are community resources and are always free to access.</div>
-            </form>
-
-            <div id="upload-modal-footer" class="hidden p-6 border-t bg-gray-50 flex justify-between items-center rounded-b-2xl">
+            <div id="upload-modal-footer" class="p-6 border-t bg-gray-50 flex justify-between items-center rounded-b-2xl">
                 <button type="button" class="back-to-selection text-sm font-semibold hover:text-primary flex items-center gap-1"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
                 <div class="flex gap-3">
                     <button type="button" class="px-4 py-2 rounded-full border bg-white shadow-sm" id="cancel-upload">Cancel</button>
-                    <button type="submit" class="bg-primary text-white font-semibold py-2 px-5 rounded-full btn-anim">Upload & Publish</button>
+                    <button type="submit" form="upload-form" id="submit-upload-btn" class="bg-primary text-white font-semibold py-2 px-5 rounded-full btn-anim">Upload & Publish</button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Preview Modal -->
-    <div id="preview-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <!-- Preview modal content will be dynamically inserted here -->
-    </div>
-    
-    <script>
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, addDoc, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
+      authDomain: "campusreach-c57e0.firebaseapp.com",
+      projectId: "campusreach-c57e0",
+      storageBucket: "gs://campusreach-c57e0.firebasestorage.app",
+      messagingSenderId: "294813850577",
+      appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
+    };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        let currentUser = null;
+        let allResources = [];
+        let activeFilters = { type: 'all', level: '', course: '', subject: '', year: '', price: 'Any', college: '' };
+        let currentUploadFile = null;
+        let selectedUploadType = 'notes';
+
+        const academicData = {
+            "School": { "12th Science": ["Physics", "Chemistry", "Maths"], "10th Grade": ["Science", "Social Studies"] },
+            "Undergraduate": { "BCA": ["C Programming", "Web Tech", "Maths"], "B.Sc IT": ["Python", "Networking", "Databases"] },
+            "Postgraduate": { "MCA": ["Data Structures", "Operating Systems", "DBMS", "AI"], "M.Sc IT": ["Advanced Java", "Cloud Computing"] }
+        };
+        
+        const showToast = (message, type = 'error') => {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type === 'success' ? 'success' : 'error'}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => { toast.classList.add('hiding'); toast.addEventListener('animationend', () => toast.remove()); }, 3000);
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
+            const swiper = new Swiper('.swiper-container', { slidesPerView: 'auto', spaceBetween: 10 });
             
-            // Profile Dropdown
-            const profileBtn = document.getElementById('profile-dropdown-btn');
-            const profileMenu = document.getElementById('profile-dropdown-menu');
-            profileBtn.addEventListener('click', (e) => { e.stopPropagation(); profileMenu.classList.toggle('hidden'); });
-            document.addEventListener('click', () => profileMenu.classList.add('hidden'));
-
-            // Main Tabs
-            const tabsContainer = document.getElementById('main-tabs');
-            const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    const tabId = button.dataset.tab;
-                    tabContents.forEach(content => {
-                        content.classList.toggle('active', content.id === tabId);
-                    });
-                });
+            document.getElementById('type-filter-swiper').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    document.querySelectorAll('.type-filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    activeFilters.type = e.target.dataset.type;
+                    // When user picks a top-level type, update filters to relevant set
+                    populateFilters(allResources, activeFilters.type);
+                    applyFilters();
+                }
+            });
+            
+            fetchResources();
+            
+            onAuthStateChanged(auth, async (user) => {
+                currentUser = user;
+                // update navbar or show login accordingly (omitted for brevity)
             });
 
-            // Upload Modal Logic
-            const uploadModal = document.getElementById('upload-modal');
-            const openUploadModalBtn = document.getElementById('open-upload-modal');
-            const closeUploadModalBtn = document.getElementById('close-upload-modal');
-            const cancelUploadBtn = document.getElementById('cancel-upload');
+            // Upload modal controls
+            document.getElementById('open-upload-btn').addEventListener('click', () => openUploadModal());
+            document.getElementById('close-upload-modal').addEventListener('click', closeUploadModal);
+            document.getElementById('cancel-upload').addEventListener('click', closeUploadModal);
+            document.querySelectorAll('.upload-type-btn').forEach(btn => btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.upload-type-btn').forEach(b=>b.classList.remove('bg-primary','text-white'));
+                e.currentTarget.classList.add('bg-primary','text-white');
+                selectedUploadType = e.currentTarget.dataset.uploadType;
+                renderUploadFields(selectedUploadType);
+            }));
+            document.getElementById('upload-form').addEventListener('submit', handleUploadSubmit);
 
-            const uploadStep1 = document.getElementById('upload-step-1');
-            const uploadForms = document.querySelectorAll('.upload-form');
-            const uploadModalFooter = document.getElementById('upload-modal-footer');
-            const uploadModalTitle = document.getElementById('upload-modal-title');
-            const backToSelectionBtn = document.querySelector('.back-to-selection');
-            
-            const resetModal = () => {
-                uploadStep1.classList.remove('hidden');
-                uploadForms.forEach(form => form.classList.add('hidden'));
-                uploadModalFooter.classList.add('hidden');
-                uploadModalTitle.textContent = "Upload Your Content";
-            };
-            
-            const openModal = () => {
-                resetModal();
-                uploadModal.classList.remove('hidden');
-            };
+            renderUploadFields(selectedUploadType);
+        });
 
-            const closeModal = () => {
-                uploadModal.classList.add('hidden');
-            };
+        async function fetchResources() {
+             const resourcesGrid = document.getElementById('resources-grid');
+             resourcesGrid.innerHTML = Array(6).fill('<div class="bg-white rounded-lg shadow-sm border overflow-hidden p-4 space-y-4 skeleton"><div class="h-6 w-3/4 rounded"></div><div class="h-4 w-1/2 rounded"></div><div class="flex justify-between"><div class="h-4 w-1/3 rounded"></div><div class="h-4 w-1/4 rounded"></div></div><div class="flex justify-between items-center pt-4 mt-2 border-t"><div class="h-8 w-1/4 rounded"></div><div class="h-10 w-1/3 rounded-full"></div></div></div>').join('');
+             const q = query(collection(db, "resources"));
+             const querySnapshot = await getDocs(q);
+             allResources = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+             populateFilters(allResources, activeFilters.type);
+             applyFilters();
+        }
 
-            openUploadModalBtn.addEventListener('click', openModal);
-            closeUploadModalBtn.addEventListener('click', closeModal);
-            cancelUploadBtn.addEventListener('click', closeModal);
+        function displayResources(resourcesToDisplay) {
+            const resourcesGrid = document.getElementById('resources-grid');
+            resourcesGrid.innerHTML = '';
 
-            document.querySelectorAll('.upload-type-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    const type = button.dataset.uploadType;
-                    uploadStep1.classList.add('hidden');
-                    uploadModalFooter.classList.remove('hidden');
+            if (resourcesToDisplay.length === 0) {
+                 resourcesGrid.innerHTML = '<p class="col-span-full text-center text-gray-500">No resources found matching your filters.</p>';
+                 document.getElementById('no-results').classList.remove('hidden');
+                 return;
+            }
+            document.getElementById('no-results').classList.add('hidden');
 
-                    let formToShowId, titleText;
-                    if (type === 'paper') {
-                        formToShowId = 'upload-form-paper';
-                        titleText = "Upload Question Paper";
-                    } else if (type === 'notes') {
-                        formToShowId = 'upload-form-notes';
-                        titleText = "Upload Your Notes";
-                    } else if (type === 'roadmap') {
-                        formToShowId = 'upload-form-roadmap';
-                        titleText = "Create a Roadmap";
-                    }
-                    
-                    document.getElementById(formToShowId).classList.remove('hidden');
-                    uploadModalTitle.textContent = titleText;
-                });
-            });
-
-            backToSelectionBtn.addEventListener('click', resetModal);
-
-            // Preview Modal
-            const previewModal = document.getElementById('preview-modal');
-            const openPreviewBtns = document.querySelectorAll('.open-preview-modal');
-            
-            const previewContentHTML = `
-                <div class="modal-content bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
-                    <div class="p-4 border-b flex justify-between items-center"><h2 class="text-xl font-bold">Preview: Computer Science Final 2023</h2><button class="close-preview-modal p-1 rounded-full hover:bg-gray-100"><i data-lucide="x" class="w-6 h-6"></i></button></div>
-                    <div class="flex-1 p-4 grid md:grid-cols-3 gap-6 overflow-y-auto">
-                        <div class="md:col-span-2 bg-gray-100 border rounded-lg flex items-center justify-center"><p class="text-gray-400">Document Preview (First 2 pages)</p></div>
-                        <div><h3 class="font-bold">Details</h3><p class="text-sm mt-2">Subject: CS, BCA, 3rd Year</p><p class="text-sm mt-1">Uploaded by: Priya S.</p><div class="mt-4 p-4 bg-secondary rounded-lg text-center"><p class="text-2xl font-bold text-primary">₹50</p><button class="mt-2 w-full bg-primary text-white font-semibold py-2 px-5 rounded-full btn-anim">Buy & Download</button></div></div>
+            resourcesToDisplay.forEach(res => {
+                const cardHtml = `
+                    <div class="p-4"><h3 class="font-bold text-lg truncate">${res.title}</h3><p class="text-xs text-gray-500">${res.course || res.college || ''} ${res.semester ? '- Sem '+res.semester : ''} ${res.year ? ', '+res.year : ''}</p></div>
+                    <div class="px-4 pb-4 space-y-3">
+                        <div class="flex items-center justify-between text-sm"><span class="flex items-center gap-1.5"><i data-lucide="user-circle" class="w-4 h-4 text-gray-400"></i>${res.uploaderName || 'Anonymous'}</span><span class="flex items-center gap-1.5"><i data-lucide="file-text" class="w-4 h-4 text-gray-400"></i>${res.pages || 'N/A'} Pages</span></div>
                     </div>
+                    <div class="p-4 bg-gray-50 border-t flex justify-between items-center">
+                        <span class="text-lg font-bold ${res.price > 0 ? 'text-primary' : 'text-green-600'}">${res.price > 0 ? `₹${res.price}` : 'Free'}</span>
+                        <div class="flex gap-2">
+                            <button class="text-sm font-semibold hover:text-primary">Preview</button>
+                            ${res.fileUrl ? `<a href="${res.fileUrl}" target="_blank" class="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full text-sm btn-anim">Download</a>` : ''}
+                        </div>
+                    </div>`;
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-lg shadow-sm border overflow-hidden transition-all hover:shadow-lg";
+                card.innerHTML = cardHtml;
+                resourcesGrid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function populateFilters(resources = [], selectedType = 'all') {
+             const filtersContainer = document.getElementById('filters-container');
+             // build lists based on resources
+             const years = [...new Set(resources.map(r => r.year))].filter(Boolean).sort((a,b) => b - a);
+             const colleges = [...new Set(resources.map(r => r.college))].filter(Boolean).sort();
+
+             // default filters visible for each type
+             let html = '';
+             html += `
+                <div>
+                    <h3 class="font-semibold mb-2">Academic Level</h3>
+                    <select id="filter-level" class="form-input text-sm"><option value="">All Levels</option>${Object.keys(academicData).map(l => `<option value="${l}">${l}</option>`).join('')}</select>
                 </div>`;
 
-            openPreviewBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    previewModal.innerHTML = previewContentHTML;
-                    lucide.createIcons();
-                    previewModal.classList.remove('hidden');
-                    previewModal.querySelector('.close-preview-modal').addEventListener('click', () => {
-                        previewModal.classList.add('hidden');
-                        previewModal.innerHTML = '';
-                    });
-                });
-            });
-            
-        });
+             // Course + Subject shown for notes and papers
+             if (selectedType === 'notes' || selectedType === 'paper' || selectedType === 'all') {
+                html += `
+                <div>
+                    <h3 class="font-semibold mb-2">Course</h3>
+                    <select id="filter-course" class="form-input text-sm" disabled><option value="">Select Level First</option></select>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Subject</h3>
+                     <select id="filter-subject" class="form-input text-sm" disabled><option value="">Select Course First</option></select>
+                </div>`;
+             }
+
+             // College filter (useful for papers/notes)
+             html += `
+                <div>
+                    <h3 class="font-semibold mb-2">College</h3>
+                    <select id="filter-college" class="form-input text-sm"><option value="">Any College</option>${colleges.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
+                </div>`;
+
+             html += `
+                <div>
+                    <h3 class="font-semibold mb-2">Year</h3>
+                    <select id="filter-year" class="form-input text-sm"><option value="">Any Year</option>${years.map(y => `<option value="${y}">${y}</option>`).join('')}</select>
+                </div>`;
+
+             html += `
+                 <div>
+                    <h3 class="font-semibold mb-2">Price</h3>
+                    <div id="price-filter" class="flex gap-4 text-sm"><label class="flex items-center"><input type="radio" name="price" value="Any" checked class="accent-primary mr-2">Any</label><label class="flex items-center"><input type="radio" name="price" value="Free" class="accent-primary mr-2">Free</label><label class="flex items-center"><input type="radio" name="price" value="Paid" class="accent-primary mr-2">Paid</label></div>
+                </div>`;
+
+             filtersContainer.innerHTML = html;
+             const levelSelect = document.getElementById('filter-level');
+             const courseSelect = document.getElementById('filter-course');
+             const subjectSelect = document.getElementById('filter-subject');
+
+             if (levelSelect) levelSelect.addEventListener('change', () => {
+                const level = levelSelect.value;
+                activeFilters.level = level;
+                const courses = level ? Object.keys(academicData[level]) : [];
+                if (courseSelect) {
+                    courseSelect.innerHTML = '<option value="">All Courses</option>' + courses.map(c => `<option value="${c}">${c}</option>`).join('');
+                    courseSelect.disabled = !level;
+                }
+                if (subjectSelect) { subjectSelect.innerHTML = '<option value="">Select Course First</option>'; subjectSelect.disabled = true; }
+                applyFilters();
+             });
+             if (courseSelect) courseSelect.addEventListener('change', () => {
+                const level = levelSelect.value;
+                const course = courseSelect.value;
+                activeFilters.course = course;
+                const subjects = (level && course) ? academicData[level][course] : [];
+                if (subjectSelect) {
+                    subjectSelect.innerHTML = '<option value="">All Subjects</option>' + subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+                    subjectSelect.disabled = !course;
+                }
+                applyFilters();
+             });
+             if (subjectSelect) subjectSelect.addEventListener('change', () => { activeFilters.subject = subjectSelect.value; applyFilters(); });
+             document.getElementById('filter-year').addEventListener('change', () => { activeFilters.year = document.getElementById('filter-year').value; applyFilters(); });
+             document.getElementById('filter-college').addEventListener('change', ()=>{ activeFilters.college = document.getElementById('filter-college').value; applyFilters(); });
+             document.getElementById('price-filter').addEventListener('change', (e) => { if(e.target.name === 'price') { activeFilters.price = e.target.value; applyFilters(); } });
+        }
+
+        function applyFilters() {
+            // Filter allResources based on activeFilters (type, level, course, subject, year, price, college)
+            let filtered = allResources.slice();
+            if (activeFilters.type && activeFilters.type !== 'all') filtered = filtered.filter(r => (r.type || 'notes') === activeFilters.type);
+            if (activeFilters.level) filtered = filtered.filter(r => r.level === activeFilters.level);
+            if (activeFilters.course) filtered = filtered.filter(r => r.course === activeFilters.course);
+            if (activeFilters.subject) filtered = filtered.filter(r => r.subject === activeFilters.subject);
+            if (activeFilters.year) filtered = filtered.filter(r => (r.year && String(r.year) === String(activeFilters.year)));
+            if (activeFilters.college) filtered = filtered.filter(r => r.college === activeFilters.college);
+            if (activeFilters.price === 'Free') filtered = filtered.filter(r => !r.price || Number(r.price) === 0);
+            if (activeFilters.price === 'Paid') filtered = filtered.filter(r => r.price && Number(r.price) > 0);
+
+            displayResources(filtered);
+        }
+
+        function openUploadModal() {
+            document.getElementById('upload-modal').classList.remove('hidden');
+            // highlight selected upload button
+            document.querySelectorAll('.upload-type-btn').forEach(b=>{ b.classList.remove('bg-primary','text-white'); if(b.dataset.uploadType===selectedUploadType){ b.classList.add('bg-primary','text-white'); }});
+            renderUploadFields(selectedUploadType);
+        }
+        function closeUploadModal() { document.getElementById('upload-modal').classList.add('hidden'); }
+
+        function renderUploadFields(type) {
+            const container = document.getElementById('upload-fields');
+            // Common fields
+            let html = `
+                <div>
+                    <label class="font-semibold">Title</label>
+                    <input id="field-title" class="form-input" required />
+                </div>
+                <div>
+                    <label class="font-semibold">Description</label>
+                    <textarea id="field-desc" class="form-input" rows="4"></textarea>
+                </div>
+                <div>
+                    <label class="font-semibold">Upload File</label>
+                    <div id="dropzone" class="dropzone" tabindex="0">Drag & drop or <span class="text-primary font-semibold">browse</span><br><small>PDF, DOCX up to 20MB</small>
+                        <input id="field-file" type="file" accept=".pdf,.doc,.docx" class="hidden" />
+                    </div>
+                </div>
+                <div>
+                    <label class="font-semibold">Set Price</label>
+                    <div class="flex items-center gap-4 mt-2"><label class="flex items-center gap-2"><input type="radio" name="upload-price" value="Free" checked class="accent-primary"> Free</label><label class="flex items-center gap-2"><input type="radio" name="upload-price" value="Paid" class="accent-primary"> Paid</label><input id="field-price" type="number" placeholder="₹XXX" class="form-input w-40 ml-4" style="display:none;" /></div>
+                </div>
+            `;
+
+            // Fields specific to type
+            if (type === 'notes' || type === 'paper') {
+                html += `
+                <div>
+                    <label class="font-semibold">Academic Level</label>
+                    <select id="field-level" class="form-input"> <option value="">Select Level</option>${Object.keys(academicData).map(l=>`<option value="${l}">${l}</option>`).join('')}</select>
+                </div>
+                <div>
+                    <label class="font-semibold">Course</label>
+                    <input id="field-course" class="form-input" placeholder="e.g. BCA, MCA" />
+                </div>
+                <div>
+                    <label class="font-semibold">Subject</label>
+                    <input id="field-subject" class="form-input" placeholder="e.g. DBMS, OOPs" />
+                </div>
+                <div>
+                    <label class="font-semibold">College Name</label>
+                    <input id="field-college" class="form-input" placeholder="e.g. KJ Somaiya" />
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="font-semibold">Year</label>
+                        <input id="field-year" class="form-input" placeholder="e.g. 2025" />
+                    </div>
+                    <div>
+                        <label class="font-semibold">Semester (optional)</label>
+                        <input id="field-semester" class="form-input" placeholder="e.g. 2" />
+                    </div>
+                </div>
+                `;
+            } else if (type === 'roadmap') {
+                html += `
+                <div>
+                    <label class="font-semibold">Domain / Track</label>
+                    <input id="field-domain" class="form-input" placeholder="e.g. Web Dev, ML, Cybersecurity" />
+                </div>
+                <div>
+                    <label class="font-semibold">Estimated Time (e.g. 3 months)</label>
+                    <input id="field-duration" class="form-input" placeholder="e.g. 3 months" />
+                </div>
+                <div>
+                    <label class="font-semibold">College / Institute (optional)</label>
+                    <input id="field-college" class="form-input" placeholder="optional" />
+                </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            // wire up dropzone/file
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('field-file');
+            dropzone.addEventListener('click', ()=> fileInput.click());
+            dropzone.addEventListener('dragover', (e)=>{ e.preventDefault(); dropzone.classList.add('ring-2','ring-primary'); });
+            dropzone.addEventListener('dragleave', ()=>{ dropzone.classList.remove('ring-2','ring-primary'); });
+            dropzone.addEventListener('drop', (e)=>{ e.preventDefault(); dropzone.classList.remove('ring-2','ring-primary'); if(e.dataTransfer.files && e.dataTransfer.files[0]){ fileInput.files = e.dataTransfer.files; currentUploadFile = e.dataTransfer.files[0]; showToast('File selected', 'success'); } });
+            fileInput.addEventListener('change', (e)=>{ if(e.target.files && e.target.files[0]){ currentUploadFile = e.target.files[0]; showToast('File selected', 'success'); } });
+
+            // price toggle
+            document.querySelectorAll('input[name="upload-price"]').forEach(r => r.addEventListener('change', (e)=>{
+                const priceInp = document.getElementById('field-price');
+                if(e.target.value === 'Paid') priceInp.style.display = 'block'; else priceInp.style.display = 'none';
+            }));
+        }
+
+        async function handleUploadSubmit(e) {
+            e.preventDefault();
+            // gather fields
+            const title = document.getElementById('field-title')?.value?.trim();
+            const desc = document.getElementById('field-desc')?.value?.trim();
+            const priceRadio = document.querySelector('input[name="upload-price"]:checked')?.value || 'Free';
+            const priceVal = priceRadio === 'Paid' ? (document.getElementById('field-price')?.value || 0) : 0;
+
+            if(!title) { showToast('Please add a title', 'error'); return; }
+            if(!currentUploadFile) { showToast('Please upload a file', 'error'); return; }
+
+            // build doc object
+            const docData = { title, description: desc, price: Number(priceVal), type: selectedUploadType, uploaderName: currentUser ? (currentUser.displayName || currentUser.email) : 'Anonymous', uploaderId: currentUser ? currentUser.uid : null, createdAt: serverTimestamp() };
+
+            if(selectedUploadType === 'notes' || selectedUploadType === 'paper'){
+                docData.level = document.getElementById('field-level')?.value || '';
+                docData.course = document.getElementById('field-course')?.value || '';
+                docData.subject = document.getElementById('field-subject')?.value || '';
+                docData.college = document.getElementById('field-college')?.value || '';
+                docData.year = document.getElementById('field-year')?.value || '';
+                docData.semester = document.getElementById('field-semester')?.value || '';
+            } else if(selectedUploadType === 'roadmap'){
+                docData.domain = document.getElementById('field-domain')?.value || '';
+                docData.duration = document.getElementById('field-duration')?.value || '';
+                docData.college = document.getElementById('field-college')?.value || '';
+            }
+
+            try {
+                // upload file to storage
+                const storageRef = ref(storage, `resources/${Date.now()}_${currentUploadFile.name}`);
+                await uploadBytes(storageRef, currentUploadFile);
+                const fileUrl = await getDownloadURL(storageRef);
+                docData.fileUrl = fileUrl;
+                // add doc to firestore
+                await addDoc(collection(db, 'resources'), docData);
+                showToast('Uploaded successfully', 'success');
+                closeUploadModal();
+                // refresh
+                fetchResources();
+            } catch (err) {
+                console.error(err);
+                showToast('Upload failed. Check console.', 'error');
+            }
+        }
     </script>
 </body>
 </html>
-

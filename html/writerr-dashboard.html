@@ -82,14 +82,14 @@
                              <button class="p-2 rounded-full hover:bg-gray-100 transition-colors relative"><i data-lucide="message-square" class="w-5 h-5 text-gray-500"></i></button>
                             <div class="relative" id="profile-dropdown-container">
                                 <button id="profile-dropdown-btn" class="flex items-center space-x-2">
-                                    <img class="h-8 w-8 rounded-full" src="https://api.dicebear.com/9.x/avataaars/svg?seed=Priya" alt="Writer avatar">
-                                    <span class="hidden md:inline text-sm font-medium">Priya Sharma</span>
+                                    <img id="navbar-profile-image" class="h-8 w-8 rounded-full object-cover" src="https://api.dicebear.com/9.x/initials/svg?seed=U" alt="Writer avatar">
+                                    <span id="navbar-user-name" class="hidden md:inline text-sm font-medium">User</span>
                                     <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
                                 </button>
                                 <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
-                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                                    <a href="/html/profile-preview(writer).html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
                                     <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Withdraw</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
+                                    <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</a>
                                 </div>
                             </div>
                         </div>
@@ -101,7 +101,7 @@
                 
                 <!-- Welcome & Quick Stats -->
                 <div class="reveal mb-8">
-                    <h1 class="text-2xl md:text-3xl font-bold mb-4">Welcome back, Priya ✍️</h1>
+                    <h1 class="text-2xl md:text-3xl font-bold mb-4">Welcome back, <span id="welcome-banner-name">Writer</span> ✍️</h1>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="bg-white p-4 rounded-lg shadow-sm border"><p class="text-sm text-muted-foreground">Active Tasks</p><p class="text-2xl font-bold">2</p></div>
                         <div class="bg-white p-4 rounded-lg shadow-sm border"><p class="text-sm text-muted-foreground">Completed</p><p class="text-2xl font-bold">35</p></div>
@@ -133,8 +133,6 @@
                                         <button class="text-sm font-semibold bg-secondary text-gray-700 px-4 py-2 rounded-full btn-anim">Save</button>
                                     </div>
                                 </div>
-                                <!-- Empty state example -->
-                                <!-- <div class="text-center py-10"><i data-lucide="rocket" class="w-12 h-12 mx-auto text-gray-300"></i><p class="mt-2 text-sm text-gray-500">No new tasks available. Check back later!</p></div> -->
                             </div>
                         </section>
                         <!-- My Tasks -->
@@ -198,43 +196,6 @@
                             </div>
                             <div class="mt-4 p-2 bg-amber-50 border-l-4 border-amber-400 text-amber-800 text-xs rounded">Only upload original content. Plagiarism will result in a ban.</div>
                         </section>
-                        <!-- Reviews -->
-                         <section id="reviews" class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 300ms;">
-                           <h2 class="text-xl font-bold mb-4">Your Reviews</h2>
-                           <div class="flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-200">
-                               <i data-lucide="award" class="w-6 h-6 text-green-600"></i>
-                               <p class="text-sm font-semibold text-green-800">You're a Top Rated Writer!</p>
-                           </div>
-                           <div class="mt-4 space-y-3">
-                               <div class="text-sm"><div class="flex items-center gap-0.5 text-amber-400"><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i><i data-lucide="star" class="w-4 h-4 fill-current"></i></div><p class="mt-1">"Excellent work on the essay!"</p></div>
-                           </div>
-                        </section>
-                        <!-- Boost Visibility (NEW) -->
-                        <section class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 400ms;">
-                            <h2 class="text-xl font-bold mb-4">Boost Your Visibility</h2>
-                            <p class="text-sm text-muted-foreground mb-4">Get noticed by more students by contributing to the community.</p>
-                            <div class="space-y-3">
-                                <a href="#" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border">
-                                    <p class="font-semibold text-sm flex items-center gap-2"><i data-lucide="upload-cloud" class="w-4 h-4 text-primary"></i> Upload High-Quality Notes</p>
-                                </a>
-                                <a href="#" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border">
-                                    <p class="font-semibold text-sm flex items-center gap-2"><i data-lucide="map" class="w-4 h-4 text-primary"></i> Create a Career Roadmap</p>
-                                </a>
-                                <a href="#" class="block p-3 bg-gray-50 hover:bg-gray-100 rounded-lg border">
-                                    <p class="font-semibold text-sm flex items-center gap-2"><i data-lucide="graduation-cap" class="w-4 h-4 text-primary"></i> Offer Career Guidance</p>
-                                </a>
-                            </div>
-                        </section>
-                        <!-- Connect with Students (NEW) -->
-                        <section class="reveal bg-white p-6 rounded-lg shadow-sm border" style="animation-delay: 500ms;">
-                           <h2 class="text-xl font-bold mb-4">Connect with Students</h2>
-                           <div class="p-4 bg-primary/10 rounded-lg text-center">
-                               <i data-lucide="video" class="w-10 h-10 text-primary mx-auto"></i>
-                               <p class="mt-2 text-sm font-semibold">Offer Live Sessions</p>
-                               <p class="text-xs text-muted-foreground mt-1">Host 1:1 video calls for tutoring, doubt clearing, and live project help.</p>
-                               <button class="mt-3 text-xs font-semibold bg-primary text-white px-3 py-1.5 rounded-full btn-anim">Manage Sessions</button>
-                           </div>
-                        </section>
                     </div>
                 </div>
             </main>
@@ -245,57 +206,89 @@
         </div>
     </div>
     
-    <!-- Toast Notification -->
-    <div id="toast" class="hidden fixed top-5 right-5 bg-green-500 text-white py-2 px-5 rounded-lg shadow-lg flex items-center gap-2 z-50">
-        <i data-lucide="check-circle" class="w-5 h-5"></i>
-        <span id="toast-message"></span>
-    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
+      authDomain: "campusreach-c57e0.firebaseapp.com",
+      projectId: "campusreach-c57e0",
+      storageBucket: "gs://campusreach-c57e0.firebasestorage.app",
+      messagingSenderId: "294813850577",
+      appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
+    };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             
-            // Profile Dropdown
+            // --- Firebase Auth Listener ---
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const userDocRef = doc(db, "users", user.uid);
+                    const docSnap = await getDoc(userDocRef);
+
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        
+                        // Populate Navbar
+                        const profileImageUrl = data.profileImage || `https://api.dicebear.com/9.x/initials/svg?seed=${data.fullname}`;
+                        document.getElementById('navbar-profile-image').src = profileImageUrl;
+                        document.getElementById('navbar-user-name').textContent = data.fullname;
+                        
+                        // Populate Welcome Banner
+                        document.getElementById('welcome-banner-name').textContent = data.fullname.split(' ')[0];
+
+                    } else {
+                        console.error("User document not found!");
+                    }
+                } else {
+                    window.location.href = "/html/login.html";
+                }
+            });
+
+            // --- UI Interactions ---
             const profileBtn = document.getElementById('profile-dropdown-btn');
             const profileMenu = document.getElementById('profile-dropdown-menu');
-            profileBtn.addEventListener('click', (e) => { e.stopPropagation(); profileMenu.classList.toggle('hidden'); });
+            profileBtn.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                profileMenu.classList.toggle('hidden'); 
+            });
             document.addEventListener('click', () => profileMenu.classList.add('hidden'));
 
-            // Scroll Reveal
+            const logoutBtn = document.getElementById('logout-btn');
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                signOut(auth).catch(err => console.error('Logout failed:', err));
+            });
+
             const revealElements = document.querySelectorAll('.reveal');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
             }, { threshold: 0.1 });
             revealElements.forEach(el => observer.observe(el));
 
-            // My Tasks Tabs
-            const tabsContainer = document.getElementById('my-tasks-tabs');
-            if (tabsContainer) {
-                const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
-                const tabContents = document.querySelectorAll('#my-tasks .tab-content');
-                tabButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        tabButtons.forEach(btn => btn.classList.remove('active'));
-                        button.classList.add('active');
-                        const tabId = button.dataset.tab;
-                        tabContents.forEach(content => {
-                            content.classList.toggle('active', content.id === tabId);
-                        });
-                    });
-                });
-            }
-
-            // --- DEMO: Show Toast on Apply button click ---
-            const applyBtn = document.querySelector('#available-tasks button');
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toast-message');
-            if (applyBtn) {
-                 applyBtn.addEventListener('click', () => {
-                    toastMessage.textContent = "You applied for the task successfully 🎉";
-                    toast.classList.remove('hidden');
-                    setTimeout(() => { toast.classList.add('hidden'); }, 3000);
-                });
-            }
+             // My Tasks Tabs
+             const tabsContainer = document.getElementById('my-tasks-tabs');
+             if (tabsContainer) {
+                 const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
+                 const tabContents = document.querySelectorAll('#my-tasks .tab-content');
+                 tabButtons.forEach(button => {
+                     button.addEventListener('click', () => {
+                         tabButtons.forEach(btn => btn.classList.remove('active'));
+                         button.classList.add('active');
+                         const tabId = button.dataset.tab;
+                         tabContents.forEach(content => {
+                             content.classList.toggle('active', content.id === tabId);
+                         });
+                     });
+                 });
+             }
         });
     </script>
 </body>

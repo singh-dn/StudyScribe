@@ -106,14 +106,14 @@
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
-      authDomain: "campusreach-c57e0.firebaseapp.com",
-      projectId: "campusreach-c57e0",
-      storageBucket: "gs://campusreach-c57e0.firebasestorage.app",
-      messagingSenderId: "294813850577",
-      appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyCWe8cVgxALsLWESxf7kdFiFbhYTj4JQtQ",
+            authDomain: "campusreach-c57e0.firebaseapp.com",
+            projectId: "campusreach-c57e0",
+            storageBucket: "campusreach-c57e0.firebasestorage.app",
+            messagingSenderId: "294813850577",
+            appId: "1:294813850577:web:49cd5cbe8240d486105ef0"
+        };
         
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -150,8 +150,17 @@
 
                 if (docSnap.exists()) {
                     const userData = docSnap.data();
+
+                    // --- NEW LOGIC ADDED HERE ---
+                    if (userData.profileSetupComplete) {
+                        // If profile is already complete, redirect to the dashboard immediately.
+                        window.location.href = "/html/student-dashboard.html";
+                        return; // Stop further execution on this page
+                    }
+                    // --- END OF NEW LOGIC ---
+
                     if (userData.role !== 'student') {
-                        window.location.href = "/html/writer-setup.html"; 
+                        window.location.href = "/html/profile-setup.html"; 
                         return;
                     }
                     document.getElementById('email').value = user.email;
@@ -215,7 +224,6 @@
                     profileSetupComplete: true 
                 };
                 
-                // --- File Upload Logic ---
                 const profilePicFile = document.getElementById('profile-image-upload').files[0];
                 if (profilePicFile) {
                     const storageRef = ref(storage, `profilePictures/${currentUser.uid}/${profilePicFile.name}`);
@@ -238,7 +246,7 @@
                 showToast('Profile saved successfully!', 'success');
                 
                 setTimeout(() => {
-                    window.location.href = '/html/profile-preview(student).html';
+                    window.location.href = '/html/student-dashboard.html';
                 }, 1500);
 
             } catch(error) {
